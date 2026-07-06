@@ -659,10 +659,84 @@ function renderGuidePanel() {
 
   const topic = topics.find((item) => item.id === activeGuideTopic) || topics[0];
   els.guideContent.innerHTML = `
-    <h3>${escapeHtml(topic.title)}</h3>
-    <p>${escapeHtml(topic.body)}</p>
-    <div class="guide-tip">${escapeHtml(topic.tip)}</div>
+    <div class="guide-copy">
+      <h3>${escapeHtml(topic.title)}</h3>
+      <p>${escapeHtml(topic.body)}</p>
+      <div class="guide-tip">${escapeHtml(topic.tip)}</div>
+    </div>
+    ${guideVisualHtml(topic.id)}
   `;
+}
+
+function guideVisualHtml(id) {
+  const visuals = {
+    blocks: `
+      <div class="guide-visual guide-visual-blocks" aria-hidden="true">
+        <div class="guide-mini-panel">
+          <span class="mini-panel-title">${escapeHtml(t("library"))}</span>
+          <div class="mini-task-card">
+            <strong>${escapeHtml(t("aiNames.english"))}</strong>
+            <span>60 ${escapeHtml(t("minute"))}</span>
+            <i></i>
+          </div>
+          <div class="mini-tags"><b>${escapeHtml(t("classes.考研"))}</b><b>${escapeHtml(t("aiTags.english.0", "英语"))}</b></div>
+        </div>
+      </div>
+    `,
+    schedule: `
+      <div class="guide-visual guide-visual-schedule" aria-hidden="true">
+        <div class="mini-library-card">${escapeHtml(t("aiNames.math"))}</div>
+        <div class="mini-calendar">
+          <span>09:00</span><span>10:00</span><span>11:00</span>
+          <div class="mini-grid-lines"></div>
+        </div>
+        <div class="mini-moving-card">${escapeHtml(t("aiNames.math"))}</div>
+      </div>
+    `,
+    details: `
+      <div class="guide-visual guide-visual-details" aria-hidden="true">
+        <div class="mini-scheduled-card">${escapeHtml(t("aiNames.meal"))}<small>12:00 - 12:45</small></div>
+        <div class="mini-popover">
+          <strong>${escapeHtml(t("detailPopoverTitle"))}</strong>
+          <span>${escapeHtml(t("detailStatus"))}: ${escapeHtml(t("statusDone"))}</span>
+          <span>${escapeHtml(t("detailCategory"))}: ${escapeHtml(t("classes.生活"))}</span>
+        </div>
+      </div>
+    `,
+    adjust: `
+      <div class="guide-visual guide-visual-adjust" aria-hidden="true">
+        <div class="mini-action-row"><b>${escapeHtml(t("markDone"))}</b><b>${escapeHtml(t("split"))}</b></div>
+        <div class="mini-action-row"><b>${escapeHtml(t("earlier"))}</b><b>${escapeHtml(t("later"))}</b></div>
+        <div class="mini-stat"><span>${escapeHtml(t("classes.考研"))}</span><i></i></div>
+      </div>
+    `,
+    preferences: `
+      <div class="guide-visual guide-visual-preferences" aria-hidden="true">
+        <div class="mini-theme-demo">
+          <div class="mini-theme light"><span>EN</span><b>◐</b></div>
+          <div class="mini-theme dark"><span>中文</span><b>◑</b></div>
+        </div>
+      </div>
+    `,
+    backup: `
+      <div class="guide-visual guide-visual-backup" aria-hidden="true">
+        <div class="mini-file">JSON</div>
+        <div class="mini-arrow">→</div>
+        <div class="mini-safe">
+          <strong>${escapeHtml(t("export"))}</strong>
+          <span>${escapeHtml(t("import"))}</span>
+        </div>
+      </div>
+    `,
+    ai: `
+      <div class="guide-visual guide-visual-ai" aria-hidden="true">
+        <div class="mini-prompt">90 ${escapeHtml(t("minute"))} · ${escapeHtml(t("aiTags.review.0", "复盘"))}</div>
+        <div class="mini-ai-dots"><i></i><i></i><i></i></div>
+        <div class="mini-ai-result">${escapeHtml(t("generatedFrom"))}</div>
+      </div>
+    `,
+  };
+  return visuals[id] || visuals.blocks;
 }
 
 function render() {

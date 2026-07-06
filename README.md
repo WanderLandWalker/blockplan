@@ -10,7 +10,7 @@
 
 <p align="center">
   <a href="https://github.com/WanderLandWalker/blockplan/releases/latest">
-    <img src="https://img.shields.io/badge/Release-v0.2.5-blue?style=for-the-badge" alt="Release">
+    <img src="https://img.shields.io/badge/Release-v0.2.6-blue?style=for-the-badge" alt="Release">
   </a>
   <a href="LICENSE">
     <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="License">
@@ -78,10 +78,10 @@ BlockPlan 的定位更窄，也更直接：
 
 | 文件 | 适合谁 | 说明 |
 |------|--------|------|
-| `BlockPlan-0.2.5-windows-setup.exe` | Windows 常用用户 | 安装到系统里，后续从开始菜单或桌面启动 |
-| `BlockPlan-0.2.5-windows-portable.exe` | 想免安装使用的人 | 双击即用，不写入安装目录 |
-| `BlockPlan-0.2.5-android-debug.apk` | Android 手机用户 | 下载到手机后安装使用 |
-| `BlockPlan-0.2.5-web.zip` | 只想用浏览器打开的人 | 解压后打开 `index.html` |
+| `BlockPlan-0.2.6-windows-setup.exe` | Windows 常用用户 | 安装到系统里，后续从开始菜单或桌面启动 |
+| `BlockPlan-0.2.6-windows-portable.exe` | 想免安装使用的人 | 双击即用，不写入安装目录 |
+| `BlockPlan-0.2.6-android-debug.apk` | Android 手机用户 | 下载到手机后安装使用 |
+| `BlockPlan-0.2.6-web.zip` | 只想用浏览器打开的人 | 解压后打开 `index.html` |
 
 不知道选哪个：
 
@@ -167,6 +167,7 @@ BlockPlan 的定位更窄，也更直接：
 
 | 版本 | 变化 |
 |:----:|------|
+| v0.2.6 | 应用内使用演示增加视觉示意和轻动画，移除 README 中容易失效的 Star History 破图 |
 | v0.2.5 | 使用演示改为软件内展开，不再通过外链打断使用流程 |
 | v0.2.4 | README 中英文拆分，新增图解指南、MIT 开源协议和软件内首次使用引导 |
 | v0.2.3 | 增加浅色 / 深色主题切换和完整深色模式适配，新增点击任务查看详情卡 |
@@ -192,13 +193,18 @@ BlockPlan 的定位更窄，也更直接：
   <img src="images/donate.jpg" alt="赞赏码" width="250">
 </p>
 
-## Star History
+## 项目热度
 
 <p align="center">
-  <a href="https://www.star-history.com/#WanderLandWalker/blockplan&Date">
-    <img src="https://api.star-history.com/svg?repos=WanderLandWalker/blockplan&type=Date" alt="Star History Chart">
+  <a href="https://github.com/WanderLandWalker/blockplan/stargazers">
+    <img src="https://img.shields.io/github/stars/WanderLandWalker/blockplan?style=for-the-badge&logo=github" alt="GitHub Stars">
+  </a>
+  <a href="https://github.com/WanderLandWalker/blockplan/forks">
+    <img src="https://img.shields.io/github/forks/WanderLandWalker/blockplan?style=for-the-badge&logo=github" alt="GitHub Forks">
   </a>
 </p>
+
+Star 趋势图可在 [Star History](https://www.star-history.com/#WanderLandWalker/blockplan&Date) 查看；README 里不再直接嵌入外部趋势图，避免第三方 SVG 服务异常时显示破图。
 
 ## 开源协议
 

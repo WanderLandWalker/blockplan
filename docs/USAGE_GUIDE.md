@@ -30,10 +30,10 @@
 
 | 你想怎么用 | 下载 |
 |------------|------|
-| Windows 正常安装 | `BlockPlan-0.2.5-windows-setup.exe` |
-| Windows 免安装 | `BlockPlan-0.2.5-windows-portable.exe` |
-| Android 手机 | `BlockPlan-0.2.5-android-debug.apk` |
-| 浏览器打开 | `BlockPlan-0.2.5-web.zip` |
+| Windows 正常安装 | `BlockPlan-0.2.6-windows-setup.exe` |
+| Windows 免安装 | `BlockPlan-0.2.6-windows-portable.exe` |
+| Android 手机 | `BlockPlan-0.2.6-android-debug.apk` |
+| 浏览器打开 | `BlockPlan-0.2.6-web.zip` |
 
 Windows 如果提示未知发布者，确认文件来自本仓库 Release 后可以继续运行。Android 如果提示禁止安装，需要临时允许当前浏览器或文件管理器安装未知来源应用。
 
