@@ -37,6 +37,7 @@
           </div>
 
           <button class="ghost-button language-button" id="languageToggleButton" type="button">EN</button>
+          <button class="icon-button theme-button" id="themeToggleButton" type="button" aria-label="切换深色模式">◐</button>
           <button class="primary-button" id="aiDraftButton">AI 生成</button>
           <button class="primary-button" id="addTemplateButton">新建块</button>
           <button class="ghost-button" id="exportDataButton" type="button">导出</button>
@@ -130,6 +131,8 @@
         </aside>
       </main>
     </div>
+
+    <div class="task-detail-popover" id="taskDetailPopover" role="dialog" aria-modal="false" hidden></div>
 
     <dialog id="templateDialog" class="dialog">
       <form method="dialog" id="templateForm">

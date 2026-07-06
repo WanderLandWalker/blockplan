@@ -11,7 +11,7 @@
 
 <p align="center">
   <a href="https://github.com/WanderLandWalker/blockplan/releases/latest">
-    <img src="https://img.shields.io/badge/Release-v0.2.2-blue?style=for-the-badge" alt="Release">
+    <img src="https://img.shields.io/badge/Release-v0.2.3-blue?style=for-the-badge" alt="Release">
   </a>
   <img src="https://img.shields.io/badge/Windows-ready-2563eb?style=for-the-badge" alt="Windows">
   <img src="https://img.shields.io/badge/Android-ready-16a34a?style=for-the-badge" alt="Android">
@@ -70,6 +70,8 @@ BlockPlan 的定位更窄，也更直接：
 | **本地保存** | 数据保存在本机，支持 JSON 导入、导出和恢复默认示例 |
 | **多端使用** | 支持 Windows、Android 和浏览器 HTML 版 |
 | **双语界面** | 支持中文 / English 一键切换，语言偏好保存在本机 |
+| **深色模式** | 支持浅色 / 深色主题切换，并会记住你的偏好 |
+| **任务详情卡** | 点击日历或清单里的任务，可用弹出卡片查看完整信息 |
 
 ## 安装
 
@@ -77,10 +79,10 @@ BlockPlan 的定位更窄，也更直接：
 
 | 文件 | 适合谁 | 说明 |
 |------|--------|------|
-| `BlockPlan-0.2.2-windows-setup.exe` | Windows 常用用户 | 安装到系统里，后续从开始菜单或桌面启动 |
-| `BlockPlan-0.2.2-windows-portable.exe` | 想免安装使用的人 | 双击即用，不写入安装目录 |
-| `BlockPlan-0.2.2-android-debug.apk` | Android 手机用户 | 下载到手机后安装使用 |
-| `BlockPlan-0.2.2-web.zip` | 只想用浏览器打开的人 | 解压后打开 `index.html` |
+| `BlockPlan-0.2.3-windows-setup.exe` | Windows 常用用户 | 安装到系统里，后续从开始菜单或桌面启动 |
+| `BlockPlan-0.2.3-windows-portable.exe` | 想免安装使用的人 | 双击即用，不写入安装目录 |
+| `BlockPlan-0.2.3-android-debug.apk` | Android 手机用户 | 下载到手机后安装使用 |
+| `BlockPlan-0.2.3-web.zip` | 只想用浏览器打开的人 | 解压后打开 `index.html` |
 
 不知道选哪个：
 
@@ -146,9 +148,15 @@ BlockPlan 的定位更窄，也更直接：
 
 清浏览器缓存、换浏览器、卸载应用或换设备前，请先导出 JSON。
 
-### 6. 切换语言
+### 6. 切换语言和主题
 
 点击顶部工具栏的 `EN` / `中文` 按钮即可切换中文和英文界面。语言偏好会保存在本机；你自己创建的任务名称、备注和标签不会被自动翻译，避免改动你的原始数据。
+
+点击顶部工具栏的 `◐` / `◑` 按钮可以切换浅色和深色模式。主题偏好同样保存在本机，下一次打开会自动沿用。
+
+### 7. 查看完整任务详情
+
+日历里的任务块高度会跟随任务时长变化，短任务可能只显示名称和时间。点击任意任务块或右侧当前日清单里的任务，会弹出任务详情卡，显示状态、分类、完整时间、冲突提示和备注。需要修改任务时，仍然使用右侧详情面板里的完成、拆分、提前、延后、删除等操作。
 
 ## 适合场景
 
@@ -192,6 +200,7 @@ BlockPlan 的定位更窄，也更直接：
 
 | 版本 | 变化 |
 |:----:|------|
+| v0.2.3 | 增加浅色 / 深色主题切换和完整深色模式适配，新增点击任务查看详情卡 |
 | v0.2.2 | 修复日历滚动时任务块遮住日期表头的问题，增加 sticky 表头层级和顶部渐隐遮罩 |
 | v0.2.1 | 增加中文 / English 双语界面、英文 README、英文 AI 草稿解析和更完整的用户使用说明 |
 | v0.2.0 | 首个公开预览版，支持 Web、Windows、Android，包含任务块模板、拖拽排程、导入导出和冲突提示 |
@@ -277,6 +286,8 @@ The key idea: you are not just filling a calendar. You are operating your own se
 | **Local-first data** | Data stays on your device, with JSON import/export |
 | **Multi-platform** | Web, Windows, and Android builds |
 | **Bilingual UI** | Switch between Chinese and English inside the app |
+| **Dark mode** | Switch between light and dark themes, with your preference saved locally |
+| **Task detail cards** | Click a scheduled task or day-list item to see full task details |
 
 ## Installation
 
@@ -284,10 +295,10 @@ Download the latest version from [Releases](https://github.com/WanderLandWalker/
 
 | File | Best For | Description |
 |------|----------|-------------|
-| `BlockPlan-0.2.2-windows-setup.exe` | Regular Windows users | Installs BlockPlan so you can launch it from the system |
-| `BlockPlan-0.2.2-windows-portable.exe` | No-install usage | Double-click to run without installation |
-| `BlockPlan-0.2.2-android-debug.apk` | Android users | Install on an Android phone |
-| `BlockPlan-0.2.2-web.zip` | Browser-only usage | Unzip and open `index.html` |
+| `BlockPlan-0.2.3-windows-setup.exe` | Regular Windows users | Installs BlockPlan so you can launch it from the system |
+| `BlockPlan-0.2.3-windows-portable.exe` | No-install usage | Double-click to run without installation |
+| `BlockPlan-0.2.3-android-debug.apk` | Android users | Install on an Android phone |
+| `BlockPlan-0.2.3-web.zip` | Browser-only usage | Unzip and open `index.html` |
 
 Not sure which one to choose:
 
@@ -353,9 +364,15 @@ Use the toolbar:
 
 Export before clearing browser cache, switching browsers, uninstalling the app, or moving to another device.
 
-### 6. Switch Language
+### 6. Switch Language And Theme
 
 Use the `EN` / `中文` button in the top toolbar to switch between Chinese and English. Your language preference is saved locally. User-created task names, notes, and tags are not auto-translated, so your original data stays unchanged.
+
+Use the `◐` / `◑` button in the top toolbar to switch between light and dark mode. Your theme preference is also saved locally and reused the next time you open BlockPlan.
+
+### 7. View Full Task Details
+
+Scheduled task cards scale with duration, so short tasks may only show the most important text. Click any scheduled task or current-day list item to open a detail card with status, category, full time, conflict hints, and notes. Use the right-side detail panel for actions such as mark done, split, move earlier/later, resize, or delete.
 
 ## FAQ
 
@@ -390,6 +407,7 @@ The current AI Draft feature is a local rule-based prototype, not an online mode
 
 | Version | Changes |
 |---------|---------|
+| v0.2.3 | Adds light / dark theme switching, complete dark-mode adaptation, and click-to-view task detail cards |
 | v0.2.2 | Fixes scheduled blocks visually covering sticky date headers while scrolling, with clearer layering and a soft top fade |
 | v0.2.1 | Adds Chinese / English UI switching, English README content, English AI draft parsing, and clearer user instructions |
 | v0.2.0 | First public preview for Web, Windows, and Android with templates, drag-and-drop scheduling, import/export, and conflict hints |

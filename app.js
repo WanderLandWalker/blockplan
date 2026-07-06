@@ -1,5 +1,6 @@
 const STORAGE_KEY = "blockplan-prototype-v1";
 const LANG_STORAGE_KEY = "blockplan-language";
+const THEME_STORAGE_KEY = "blockplan-theme";
 const EXPORT_VERSION = 1;
 const MINUTES_PER_DAY = 24 * 60;
 const DAY_START_HOUR = 0;
@@ -85,6 +86,7 @@ const defaultState = {
 
 let state = loadState();
 let language = loadLanguage();
+let theme = loadTheme();
 let dragTemplateId = null;
 let dragInstanceId = null;
 
@@ -95,6 +97,10 @@ const i18n = {
     appSubtitle: "任务块排程器",
     languageToggle: "EN",
     languageTitle: "Switch to English",
+    themeDark: "深色模式",
+    themeLight: "浅色模式",
+    switchToDark: "切换到深色模式",
+    switchToLight: "切换到浅色模式",
     toolbarLabel: "排程工具栏",
     previous: "上一段时间",
     today: "回到今天",
@@ -159,6 +165,10 @@ const i18n = {
     detailConflict: "冲突",
     conflictText: "这个时间段和同一天的其他任务重叠。",
     detailNote: "备注",
+    detailStatus: "状态",
+    detailPopoverTitle: "任务详情",
+    statusPlanned: "计划中",
+    statusDone: "已完成",
     noNote: "暂无备注",
     markUndone: "标为未完成",
     markDone: "标为完成",
@@ -202,6 +212,10 @@ const i18n = {
     appSubtitle: "Task Block Scheduler",
     languageToggle: "中文",
     languageTitle: "切换到中文",
+    themeDark: "Dark mode",
+    themeLight: "Light mode",
+    switchToDark: "Switch to dark mode",
+    switchToLight: "Switch to light mode",
     toolbarLabel: "Planner toolbar",
     previous: "Previous range",
     today: "Today",
@@ -266,6 +280,10 @@ const i18n = {
     detailConflict: "Conflict",
     conflictText: "This time range overlaps another task on the same day.",
     detailNote: "Note",
+    detailStatus: "Status",
+    detailPopoverTitle: "Task Details",
+    statusPlanned: "Planned",
+    statusDone: "Done",
     noNote: "No note",
     markUndone: "Mark Undone",
     markDone: "Mark Done",
@@ -323,6 +341,7 @@ function cacheElements() {
     rangeTitle: document.querySelector("#rangeTitle"),
     rangeSubtitle: document.querySelector("#rangeSubtitle"),
     legend: document.querySelector("#legend"),
+    taskDetailPopover: document.querySelector("#taskDetailPopover"),
     detailHint: document.querySelector("#detailHint"),
     detailContent: document.querySelector("#detailContent"),
     currentListTitle: document.querySelector("#currentListTitle"),
@@ -346,6 +365,7 @@ function cacheElements() {
     aiPrompt: document.querySelector("#aiPrompt"),
     aiDraftButton: document.querySelector("#aiDraftButton"),
     languageToggleButton: document.querySelector("#languageToggleButton"),
+    themeToggleButton: document.querySelector("#themeToggleButton"),
     exportDataButton: document.querySelector("#exportDataButton"),
     importDataButton: document.querySelector("#importDataButton"),
     resetDataButton: document.querySelector("#resetDataButton"),
@@ -359,6 +379,7 @@ function cacheElements() {
 function bindEvents() {
   els.addTemplateButton.addEventListener("click", () => openTemplateDialog());
   els.languageToggleButton.addEventListener("click", toggleLanguage);
+  els.themeToggleButton.addEventListener("click", toggleTheme);
 
   els.templateForm.addEventListener("submit", (event) => {
     event.preventDefault();
@@ -417,12 +438,25 @@ function bindEvents() {
 
   els.prevRange.addEventListener("click", () => shiftRange(-1));
   els.nextRange.addEventListener("click", () => shiftRange(1));
+  els.plannerCanvas.addEventListener("scroll", hideTaskDetailPopover);
+  window.addEventListener("resize", hideTaskDetailPopover);
 
   document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && !els.taskDetailPopover.hidden) {
+      hideTaskDetailPopover();
+      return;
+    }
     if (isEditingContext(event.target)) return;
     if (event.key === "Delete" && state.selectedInstanceId) {
       deleteInstance(state.selectedInstanceId);
     }
+  });
+
+  document.addEventListener("click", (event) => {
+    if (els.taskDetailPopover.hidden) return;
+    if (els.taskDetailPopover.contains(event.target)) return;
+    if (event.target.closest(".scheduled-block, .class-block, .today-item")) return;
+    hideTaskDetailPopover();
   });
 }
 
@@ -432,7 +466,16 @@ function toggleLanguage() {
   render();
 }
 
+function toggleTheme() {
+  theme = theme === "dark" ? "light" : "dark";
+  localStorage.setItem(THEME_STORAGE_KEY, theme);
+  applyTheme();
+  applyLanguageChrome();
+}
+
 function render() {
+  hideTaskDetailPopover();
+  applyTheme();
   applyLanguageChrome();
   updateSegments();
   updateFocusChips();
@@ -460,6 +503,9 @@ function applyLanguageChrome() {
   els.languageToggleButton.textContent = t("languageToggle");
   els.languageToggleButton.title = t("languageTitle");
   els.languageToggleButton.setAttribute("aria-label", t("languageTitle"));
+  els.themeToggleButton.textContent = theme === "dark" ? "◑" : "◐";
+  els.themeToggleButton.title = theme === "dark" ? t("switchToLight") : t("switchToDark");
+  els.themeToggleButton.setAttribute("aria-label", els.themeToggleButton.title);
   els.aiDraftButton.textContent = t("aiGenerate");
   els.addTemplateButton.textContent = t("addBlock");
   els.exportDataButton.textContent = t("export");
@@ -675,7 +721,7 @@ function renderTimePlanner() {
     `;
     block.addEventListener("click", (event) => {
       event.stopPropagation();
-      selectInstance(instance.id);
+      selectInstance(instance.id, block.getBoundingClientRect());
     });
     block.addEventListener("dragstart", (event) => {
       dragInstanceId = instance.id;
@@ -744,7 +790,7 @@ function renderClassPlanner() {
     block.className = "class-block";
     block.style.setProperty("--task-color", template.color);
     block.innerHTML = `<strong>${escapeHtml(template.name)}</strong><span>${formatMinutes(instance.start)} · ${formatDuration(instance.duration)}</span>`;
-    block.addEventListener("click", () => selectInstance(instance.id));
+    block.addEventListener("click", () => selectInstance(instance.id, block.getBoundingClientRect()));
     cell.append(block);
   });
 }
@@ -759,19 +805,87 @@ function renderDetails() {
   }
 
   const template = getTemplate(instance.templateId);
-  if (!template) return;
+  if (!template) {
+    hideTaskDetailPopover();
+    return;
+  }
 
   els.detailHint.textContent = `${formatFullDate(instance.date)} · ${formatMinutes(instance.start)}`;
   els.detailContent.className = "detail-content";
-  els.detailContent.innerHTML = `
+  els.detailContent.innerHTML = taskDetailBodyHtml(instance, template);
+  bindTaskDetailActions(els.detailContent, instance.id);
+}
+
+function showTaskDetailPopover(instanceId, anchorRect) {
+  const instance = state.instances.find((item) => item.id === instanceId);
+  const template = getTemplate(instance?.templateId);
+  if (!instance || !template || !anchorRect) {
+    hideTaskDetailPopover();
+    return;
+  }
+
+  els.taskDetailPopover.hidden = false;
+  els.taskDetailPopover.style.setProperty("--task-color", template.color);
+  els.taskDetailPopover.innerHTML = `
+    <div class="task-popover-head">
+      <div>
+        <span>${t("detailPopoverTitle")}</span>
+        <h3>${escapeHtml(template.name)}</h3>
+      </div>
+      <button class="icon-button popover-close" type="button" data-close-popover aria-label="${t("close")}">×</button>
+    </div>
+    <div class="task-popover-time">${formatFullDate(instance.date)} · ${formatMinutes(instance.start)} - ${formatMinutes(instance.start + instance.duration)}</div>
+    ${taskDetailBodyHtml(instance, template, { includeActions: false })}
+  `;
+  els.taskDetailPopover.querySelector("[data-close-popover]").addEventListener("click", hideTaskDetailPopover);
+  positionTaskDetailPopover(anchorRect);
+}
+
+function hideTaskDetailPopover() {
+  if (!els.taskDetailPopover) return;
+  els.taskDetailPopover.hidden = true;
+  els.taskDetailPopover.innerHTML = "";
+}
+
+function positionTaskDetailPopover(anchorRect) {
+  const card = els.taskDetailPopover;
+  const margin = 12;
+  const gap = 10;
+  const width = Math.min(340, window.innerWidth - margin * 2);
+  card.style.width = `${width}px`;
+
+  const cardRect = card.getBoundingClientRect();
+  let left = anchorRect.right + gap;
+  if (left + cardRect.width > window.innerWidth - margin) {
+    left = anchorRect.left - cardRect.width - gap;
+  }
+  left = clamp(left, margin, window.innerWidth - cardRect.width - margin);
+
+  let top = anchorRect.top;
+  if (top + cardRect.height > window.innerHeight - margin) {
+    top = anchorRect.bottom - cardRect.height;
+  }
+  top = clamp(top, margin, window.innerHeight - cardRect.height - margin);
+
+  card.style.left = `${left}px`;
+  card.style.top = `${top}px`;
+}
+
+function taskDetailBodyHtml(instance, template, options = {}) {
+  const includeActions = options.includeActions !== false;
+  return `
     <div class="detail-grid">
       <div class="detail-row">
         <span>${t("detailTask")}</span>
         <strong>${escapeHtml(template.name)}</strong>
       </div>
       <div class="detail-row">
+        <span>${t("detailStatus")}</span>
+        <p>${instance.status === "done" ? t("statusDone") : t("statusPlanned")}</p>
+      </div>
+      <div class="detail-row">
         <span>${t("detailCategory")}</span>
-        <p>${escapeHtml(displayClassName(template.className))} / ${template.tags.map(escapeHtml).join(" / ")}</p>
+        <p>${formatTemplateCategory(template)}</p>
       </div>
       <div class="detail-row">
         <span>${t("detailTime")}</span>
@@ -790,26 +904,45 @@ function renderDetails() {
         <p>${escapeHtml(template.note || t("noNote"))}</p>
       </div>
     </div>
-    <div class="detail-actions">
-      <button type="button" data-action="toggle">${instance.status === "done" ? t("markUndone") : t("markDone")}</button>
-      <button type="button" data-action="split">${t("split")}</button>
-      <button type="button" data-action="earlier">${t("earlier")}</button>
-      <button type="button" data-action="later">${t("later")}</button>
-      <button type="button" data-action="shorter">${t("shorter")}</button>
-      <button type="button" data-action="longer">${t("longer")}</button>
-      <button type="button" data-action="postpone">${t("postpone")}</button>
-      <button type="button" data-action="delete" class="danger">${t("delete")}</button>
-    </div>
+    ${
+      includeActions
+        ? `<div class="detail-actions">
+            <button type="button" data-action="toggle">${instance.status === "done" ? t("markUndone") : t("markDone")}</button>
+            <button type="button" data-action="split">${t("split")}</button>
+            <button type="button" data-action="earlier">${t("earlier")}</button>
+            <button type="button" data-action="later">${t("later")}</button>
+            <button type="button" data-action="shorter">${t("shorter")}</button>
+            <button type="button" data-action="longer">${t("longer")}</button>
+            <button type="button" data-action="postpone">${t("postpone")}</button>
+            <button type="button" data-action="delete" class="danger">${t("delete")}</button>
+          </div>`
+        : ""
+    }
   `;
+}
 
-  els.detailContent.querySelector("[data-action='toggle']").addEventListener("click", () => toggleDone(instance.id));
-  els.detailContent.querySelector("[data-action='split']").addEventListener("click", () => splitInstance(instance.id));
-  els.detailContent.querySelector("[data-action='earlier']").addEventListener("click", () => shiftInstanceMinutes(instance.id, -15));
-  els.detailContent.querySelector("[data-action='later']").addEventListener("click", () => shiftInstanceMinutes(instance.id, 15));
-  els.detailContent.querySelector("[data-action='shorter']").addEventListener("click", () => resizeInstance(instance.id, -15));
-  els.detailContent.querySelector("[data-action='longer']").addEventListener("click", () => resizeInstance(instance.id, 15));
-  els.detailContent.querySelector("[data-action='postpone']").addEventListener("click", () => postponeInstance(instance.id));
-  els.detailContent.querySelector("[data-action='delete']").addEventListener("click", () => deleteInstance(instance.id));
+function bindTaskDetailActions(container, instanceId) {
+  container.querySelectorAll("[data-action]").forEach((button) => {
+    button.addEventListener("click", (event) => {
+      event.stopPropagation();
+      const actions = {
+        toggle: () => toggleDone(instanceId),
+        split: () => splitInstance(instanceId),
+        earlier: () => shiftInstanceMinutes(instanceId, -15),
+        later: () => shiftInstanceMinutes(instanceId, 15),
+        shorter: () => resizeInstance(instanceId, -15),
+        longer: () => resizeInstance(instanceId, 15),
+        postpone: () => postponeInstance(instanceId),
+        delete: () => deleteInstance(instanceId),
+      };
+      actions[button.dataset.action]?.();
+    });
+  });
+}
+
+function formatTemplateCategory(template) {
+  const tags = template.tags.length ? template.tags.map(escapeHtml).join(" / ") : escapeHtml(t("untagged"));
+  return `${escapeHtml(displayClassName(template.className))} / ${tags}`;
 }
 
 function renderTodayList() {
@@ -835,7 +968,7 @@ function renderTodayList() {
     item.style.setProperty("--task-color", template.color);
     if (hasTimeConflict(instance)) item.classList.add("has-conflict");
     item.innerHTML = `<strong>${escapeHtml(template.name)}</strong><span>${formatMinutes(instance.start)} · ${escapeHtml(displayClassName(template.className))} · ${escapeHtml(template.tags[0] || t("untagged"))}</span>`;
-    item.addEventListener("click", () => selectInstance(instance.id));
+    item.addEventListener("click", () => selectInstance(instance.id, item.getBoundingClientRect()));
     els.todayList.append(item);
   });
 }
@@ -962,13 +1095,18 @@ function moveInstance(instanceId, date, start) {
   render();
 }
 
-function selectInstance(id) {
+function selectInstance(id, anchorRect = null) {
   state.selectedInstanceId = id;
   saveState();
   renderPlanner();
   renderDetails();
   renderTodayList();
   renderStats();
+  if (anchorRect) {
+    showTaskDetailPopover(id, anchorRect);
+  } else {
+    hideTaskDetailPopover();
+  }
 }
 
 function toggleDone(id) {
@@ -1420,10 +1558,21 @@ function saveState() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
 }
 
+function applyTheme() {
+  document.documentElement.dataset.theme = theme;
+  document.querySelector("meta[name='theme-color']")?.setAttribute("content", theme === "dark" ? "#0f172a" : "#2563eb");
+}
+
 function loadLanguage() {
   const stored = localStorage.getItem(LANG_STORAGE_KEY);
   if (stored === "zh" || stored === "en") return stored;
   return navigator.language?.toLowerCase().startsWith("zh") ? "zh" : DEFAULT_LANG;
+}
+
+function loadTheme() {
+  const stored = localStorage.getItem(THEME_STORAGE_KEY);
+  if (stored === "dark" || stored === "light") return stored;
+  return window.matchMedia?.("(prefers-color-scheme: dark)").matches ? "dark" : "light";
 }
 
 function t(key, fallback = key) {
