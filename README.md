@@ -1,20 +1,27 @@
 <h1 align="center">BlockPlan</h1>
 
 <p align="center">
-  <b>任务块排程工具：先把事情做成可复用的块，再拖进日历形成计划。</b>
+  <b>任务块排程工具：先把事情做成可复用的块，再拖进日历形成计划。</b><br>
+  <b>A task-block scheduler: create reusable blocks first, then drag them into your planner.</b>
+</p>
+
+<p align="center">
+  <a href="#简体中文">简体中文</a> · <a href="#english">English</a>
 </p>
 
 <p align="center">
   <a href="https://github.com/WanderLandWalker/blockplan/releases/latest">
     <img src="https://img.shields.io/badge/Release-v0.2.0-blue?style=for-the-badge" alt="Release">
   </a>
-  <img src="https://img.shields.io/badge/Windows-支持-2563eb?style=for-the-badge" alt="Windows">
-  <img src="https://img.shields.io/badge/Android-支持-16a34a?style=for-the-badge" alt="Android">
-  <img src="https://img.shields.io/badge/Web-支持-f59e0b?style=for-the-badge" alt="Web">
-  <img src="https://img.shields.io/badge/Local_First-本地优先-64748b?style=for-the-badge" alt="Local First">
+  <img src="https://img.shields.io/badge/Windows-ready-2563eb?style=for-the-badge" alt="Windows">
+  <img src="https://img.shields.io/badge/Android-ready-16a34a?style=for-the-badge" alt="Android">
+  <img src="https://img.shields.io/badge/Web-ready-f59e0b?style=for-the-badge" alt="Web">
+  <img src="https://img.shields.io/badge/Local_First-local-64748b?style=for-the-badge" alt="Local First">
 </p>
 
 ---
+
+## 简体中文
 
 ## 为什么需要它
 
@@ -62,6 +69,7 @@ BlockPlan 的定位更窄，也更直接：
 | **冲突提示** | 时间重叠时会提示，避免安排互相打架 |
 | **本地保存** | 数据保存在本机，支持 JSON 导入、导出和恢复默认示例 |
 | **多端使用** | 支持 Windows、Android 和浏览器 HTML 版 |
+| **双语界面** | 支持中文 / English 一键切换，语言偏好保存在本机 |
 
 ## 安装
 
@@ -138,6 +146,10 @@ BlockPlan 的定位更窄，也更直接：
 
 清浏览器缓存、换浏览器、卸载应用或换设备前，请先导出 JSON。
 
+### 6. 切换语言
+
+点击顶部工具栏的 `EN` / `中文` 按钮即可切换中文和英文界面。语言偏好会保存在本机；你自己创建的任务名称、备注和标签不会被自动翻译，避免改动你的原始数据。
+
 ## 适合场景
 
 | 场景 | 用法 |
@@ -164,6 +176,10 @@ BlockPlan 的定位更窄，也更直接：
 ### 会上传我的计划数据吗？
 
 不会。当前版本不需要账号，没有云端同步，也没有后端服务。
+
+### AI 生成是什么？依靠什么实现？
+
+当前的 AI 生成是本地规则解析原型，不会调用在线大模型。它会从你的描述里识别“数学、英语、政治、复盘、吃饭、运动、项目”等关键词，以及“明天、上午、下午、晚上、90 分钟”等时间信息，然后自动生成任务块和排程草稿。
 
 ## 当前限制
 
@@ -204,4 +220,190 @@ BlockPlan 的定位更窄，也更直接：
 
 <p>
   <img src="images/donate.jpg" alt="赞赏码" width="250">
+</p>
+
+---
+
+## English
+
+BlockPlan is a task-block scheduler. Instead of starting from a blank calendar event every time, you first create reusable task blocks, then drag them into a calendar-like planner.
+
+## Why It Exists
+
+Many planning apps can create tasks, to-dos, reminders, and calendar events. The problem is that real planning often needs something more concrete:
+
+| Pain Point | How BlockPlan Helps |
+|------------|---------------------|
+| **To-do lists say what to do, but not when to do it** | Drag tasks directly onto a time grid, so every task gets a start time and duration |
+| **Calendars are good for fixed events, not reusable study/project/life blocks** | Build reusable templates first, then place them repeatedly |
+| **Similar tasks require repeated form filling** | Keep name, class, tags, color, and duration in the template library |
+| **Colorful calendars become hard to read** | Class/tag are used for filtering, stats, and category views, not just decoration |
+| **Automatic planners can feel heavy or opaque** | Start with visible, explainable drag-and-drop planning, then add automation gradually |
+
+BlockPlan is not just for recording events. It is for turning a pile of things you need to do into blocks that can be moved, reused, measured, and reviewed.
+
+## What Makes It Different
+
+There are already many strong planning tools:
+
+- [Sunsama](https://www.sunsama.com/) and [Akiflow](https://akiflow.com/) focus on task aggregation, daily planning, and time blocking.
+- [Motion](https://www.usemotion.com/) and [Reclaim](https://reclaim.ai/) focus on AI scheduling for tasks, meetings, habits, and open time.
+- Traditional calendars and to-do apps are great for fixed events, reminders, and simple lists.
+
+BlockPlan is narrower and more direct:
+
+| Area | Common Tools | BlockPlan |
+|------|--------------|-----------|
+| **Starting point** | Calendar events or to-do items | Reusable task blocks |
+| **Scheduling** | Create events, fill forms, or let automation decide | Drag templates into time slots |
+| **Reuse** | Copy tasks, repeat rules, hidden templates | The template library is the main interface |
+| **Category view** | Lists, projects, or calendar colors | Class/tag drive filtering, stats, and category view |
+| **Control** | Strong automation, but more rules to manage | Manual drag-and-drop, easy to see what changed |
+| **Access** | Often requires accounts, integrations, or subscriptions | Current version runs locally without an account |
+
+The key idea: you are not just filling a calendar. You are operating your own set of planning blocks.
+
+## Features
+
+| Feature | Description |
+|---------|-------------|
+| **Task block templates** | Create reusable tasks with class, tags, color, and default duration |
+| **Drag-and-drop scheduling** | Drag blocks into the calendar to place them on a date and time |
+| **Week / Day / Class views** | Review your plan by time, current day, or category |
+| **Current-day list** | Automatically turns a selected day into an executable task list |
+| **Conflict hints** | Shows when tasks overlap on the same day |
+| **Local-first data** | Data stays on your device, with JSON import/export |
+| **Multi-platform** | Web, Windows, and Android builds |
+| **Bilingual UI** | Switch between Chinese and English inside the app |
+
+## Installation
+
+Download the latest version from [Releases](https://github.com/WanderLandWalker/blockplan/releases/latest).
+
+| File | Best For | Description |
+|------|----------|-------------|
+| `BlockPlan-0.2.0-windows-setup.exe` | Regular Windows users | Installs BlockPlan so you can launch it from the system |
+| `BlockPlan-0.2.0-windows-portable.exe` | No-install usage | Double-click to run without installation |
+| `BlockPlan-0.2.0-android-debug.apk` | Android users | Install on an Android phone |
+| `BlockPlan-0.2.0-web.zip` | Browser-only usage | Unzip and open `index.html` |
+
+Not sure which one to choose:
+
+- Windows PC: download `windows-setup.exe`.
+- Temporary trial: download `windows-portable.exe`.
+- Android phone: download `android-debug.apk`.
+- No installation: download `web.zip`.
+
+## How To Use
+
+### 1. Create Task Blocks
+
+In the template library on the left, create a new task block:
+
+| Field | Example |
+|-------|---------|
+| Name | Calculus review, English reading, exercise, project work |
+| Class | Exam prep, life, project |
+| Tags | math, reading, review |
+| Default duration | 30 / 60 / 90 minutes |
+| Color | Used for quick visual recognition |
+| Note | Materials, goal, or completion standard |
+
+### 2. Drag Blocks Into The Calendar
+
+Drag a task block from the left into the planner grid.
+
+Example:
+
+```text
+Template: Calculus review, 90 minutes
+Drop at: Monday 09:00
+Result: Monday 09:00-10:30 has a scheduled Calculus review task
+```
+
+### 3. Adjust Scheduled Tasks
+
+Click a scheduled task and use the detail panel:
+
+| Action | Effect |
+|--------|--------|
+| Mark Done | Mark the task as completed |
+| Earlier / Later | Move the start time |
+| Shorter / Longer | Change duration |
+| Split | Split a long task into two blocks |
+| Delete | Remove this scheduled instance without deleting the template |
+
+### 4. Switch Views
+
+| View | Use It For |
+|------|------------|
+| Week | See the whole week's plan |
+| Day | Focus on one day's execution list |
+| Class | See how time is distributed across categories |
+
+### 5. Back Up Your Data
+
+Use the toolbar:
+
+- **Export**: save current data as a JSON file.
+- **Import**: restore tasks and schedule from JSON.
+- **Reset**: restore default demo data.
+
+Export before clearing browser cache, switching browsers, uninstalling the app, or moving to another device.
+
+### 6. Switch Language
+
+Use the `EN` / `中文` button in the top toolbar to switch between Chinese and English. Your language preference is saved locally. User-created task names, notes, and tags are not auto-translated, so your original data stays unchanged.
+
+## FAQ
+
+### Why does Windows say the publisher is unknown?
+
+The current build is not code-signed yet. If the installer comes from this repository's Release page, you can choose to continue.
+
+### Why does Android block installation?
+
+Android restricts APKs from unknown sources. Temporarily allow your browser or file manager to install the APK.
+
+### Where is my data stored?
+
+Data is stored locally in the browser or app environment. Export a JSON backup before clearing cache or uninstalling.
+
+### Does BlockPlan upload my schedule?
+
+No. The current version has no account system, no cloud sync, and no backend service.
+
+### What does the AI Draft feature do?
+
+The current AI Draft feature is a local rule-based prototype, not an online model integration. It recognizes keywords such as math, English, politics, review, meal, exercise, and project, plus timing phrases such as tomorrow, morning, afternoon, evening, and 90 minutes, then creates task-block drafts from that description.
+
+## Current Limits
+
+- Mobile works, but touch drag-and-drop still needs deeper optimization.
+- Conflict handling is currently a warning, not automatic rescheduling.
+- AI task creation is a local rule-based prototype, not a real online model yet.
+- Windows and Android builds are not code-signed yet.
+
+## Star History
+
+<p align="center">
+  <a href="https://www.star-history.com/#WanderLandWalker/blockplan&Date">
+    <img src="https://api.star-history.com/svg?repos=WanderLandWalker/blockplan&type=Date" alt="Star History Chart">
+  </a>
+</p>
+
+## Support
+
+If BlockPlan helps you turn fuzzy plans into movable, executable, reviewable blocks, a GitHub Star would mean a lot.
+
+<p>
+  <a href="https://github.com/WanderLandWalker/blockplan">
+    <img src="https://img.shields.io/github/stars/WanderLandWalker/blockplan?style=social" alt="GitHub Stars">
+  </a>
+</p>
+
+You can also support the author here:
+
+<p>
+  <img src="images/donate.jpg" alt="Donation QR code" width="250">
 </p>

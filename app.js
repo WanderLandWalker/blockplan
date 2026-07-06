@@ -1,8 +1,10 @@
 const STORAGE_KEY = "blockplan-prototype-v1";
+const LANG_STORAGE_KEY = "blockplan-language";
 const EXPORT_VERSION = 1;
 const MINUTES_PER_DAY = 24 * 60;
 const DAY_START_HOUR = 0;
 const DAY_HOUR_COUNT = 24;
+const DEFAULT_LANG = "zh";
 
 const classColors = {
   考研: "#4f7cff",
@@ -82,10 +84,228 @@ const defaultState = {
 };
 
 let state = loadState();
+let language = loadLanguage();
 let dragTemplateId = null;
 let dragInstanceId = null;
 
 const els = {};
+
+const i18n = {
+  zh: {
+    appSubtitle: "任务块排程器",
+    languageToggle: "EN",
+    languageTitle: "Switch to English",
+    toolbarLabel: "排程工具栏",
+    previous: "上一段时间",
+    today: "回到今天",
+    next: "下一段时间",
+    viewSwitch: "视图切换",
+    views: { week: "周", day: "日", class: "类" },
+    aiGenerate: "AI 生成",
+    addBlock: "新建块",
+    export: "导出",
+    import: "导入",
+    reset: "重置",
+    library: "模板库",
+    librarySubtitle: "先建块，再拖进时间表",
+    collapseLibrary: "收起模板库",
+    search: "搜索",
+    searchPlaceholder: "数学 / 吃饭 / 论文",
+    focus: { all: "全部", 考研: "考研", 生活: "生活", 项目: "项目" },
+    queue: "待安排",
+    queueSubtitle: "模板还没生成过实例",
+    detail: "详情",
+    detailHint: "选择一个任务块",
+    detailEmpty: "点击日历里的任务，或从左侧拖入一个任务块。",
+    currentList: "当前日清单",
+    currentListSubtitle: "由当前日期任务自动生成",
+    stats: "统计",
+    statsSubtitle: "按大类汇总已排时间",
+    dialogNew: "新建任务块",
+    dialogEdit: "编辑任务块",
+    close: "关闭",
+    name: "名称",
+    namePlaceholder: "高数第三章复习",
+    className: "大类",
+    tags: "子类 / tag",
+    tagsPlaceholder: "数学, 高数, 第三章",
+    duration: "默认时长",
+    color: "颜色",
+    mode: "排程类型",
+    note: "备注",
+    notePlaceholder: "可以写资料、目标、完成标准",
+    cancel: "取消",
+    save: "保存",
+    aiDialogTitle: "AI 生成任务块",
+    aiPromptLabel: "描述你想安排的事",
+    aiPromptExample: "明天上午安排高数第三章复习 90 分钟，下午安排英语阅读 60 分钟，晚上留 30 分钟复盘。",
+    aiNote: "原型里用规则解析模拟 AI：会识别数学、英语、政治、复盘、吃饭、运动等关键词并创建任务块。",
+    generate: "生成",
+    plannerSubtitle: "横轴日期，纵轴时间。拖动任务块到格子里。",
+    classPlannerTitle: "分类排程",
+    classPlannerSubtitle: "横轴 class/tag，纵轴日期。适合检查大类之间的占比。",
+    timeCorner: "时间",
+    dateCorner: "日期",
+    minute: "分钟",
+    emptyUnscheduled: "所有任务块都至少安排过一次。",
+    emptyCurrentDate: "当前日期还没有安排。",
+    emptyStats: "拖入任务后会生成统计。",
+    untagged: "未标记",
+    unclassified: "未分类",
+    conflictTitle: "这个时间段和同一天的其他任务重叠",
+    detailTask: "任务",
+    detailCategory: "分类",
+    detailTime: "时间",
+    detailConflict: "冲突",
+    conflictText: "这个时间段和同一天的其他任务重叠。",
+    detailNote: "备注",
+    noNote: "暂无备注",
+    markUndone: "标为未完成",
+    markDone: "标为完成",
+    split: "拆成两块",
+    earlier: "提前15分",
+    later: "延后15分",
+    shorter: "缩短15分",
+    longer: "延长15分",
+    postpone: "推迟一天",
+    delete: "删除",
+    generatedFrom: "由描述生成",
+    importInvalid: "导入失败：文件不是有效的 BlockPlan JSON。",
+    importDone: "导入完成。",
+    importParseError: "导入失败：JSON 文件无法解析。",
+    resetConfirm: "确定要清空当前数据并恢复默认示例吗？建议先导出备份。",
+    modes: { slot: "时间段", point: "时间点", day: "整天", week: "跨周" },
+    classes: { 考研: "考研", 生活: "生活", 项目: "项目", 杂事: "杂事" },
+    weekdays: ["周日", "周一", "周二", "周三", "周四", "周五", "周六"],
+    aiNames: {
+      math: "数学复习",
+      english: "英语训练",
+      politics: "政治刷题",
+      meal: "吃饭",
+      exercise: "运动",
+      project: "项目推进",
+      review: "晚间复盘",
+      fallback: "新任务",
+    },
+    aiTags: {
+      math: ["数学"],
+      english: ["英语"],
+      politics: ["政治"],
+      meal: ["吃饭"],
+      exercise: ["运动"],
+      project: ["项目"],
+      review: ["复盘"],
+      fallback: ["AI"],
+    },
+  },
+  en: {
+    appSubtitle: "Task Block Scheduler",
+    languageToggle: "中文",
+    languageTitle: "切换到中文",
+    toolbarLabel: "Planner toolbar",
+    previous: "Previous range",
+    today: "Today",
+    next: "Next range",
+    viewSwitch: "View switcher",
+    views: { week: "Week", day: "Day", class: "Class" },
+    aiGenerate: "AI Draft",
+    addBlock: "New Block",
+    export: "Export",
+    import: "Import",
+    reset: "Reset",
+    library: "Template Library",
+    librarySubtitle: "Build blocks first, then drag them into time",
+    collapseLibrary: "Collapse template library",
+    search: "Search",
+    searchPlaceholder: "math / meal / paper",
+    focus: { all: "All", 考研: "Exam", 生活: "Life", 项目: "Project" },
+    queue: "Unscheduled",
+    queueSubtitle: "Templates that have not been placed yet",
+    detail: "Details",
+    detailHint: "Select a task block",
+    detailEmpty: "Click a scheduled task, or drag a block from the left.",
+    currentList: "Current Day",
+    currentListSubtitle: "Generated from the current day's schedule",
+    stats: "Stats",
+    statsSubtitle: "Scheduled time by category",
+    dialogNew: "New Task Block",
+    dialogEdit: "Edit Task Block",
+    close: "Close",
+    name: "Name",
+    namePlaceholder: "Calculus chapter review",
+    className: "Class",
+    tags: "Subclass / tags",
+    tagsPlaceholder: "math, calculus, chapter 3",
+    duration: "Default duration",
+    color: "Color",
+    mode: "Schedule type",
+    note: "Note",
+    notePlaceholder: "Materials, goal, or completion standard",
+    cancel: "Cancel",
+    save: "Save",
+    aiDialogTitle: "AI Draft Task Blocks",
+    aiPromptLabel: "Describe what you want to schedule",
+    aiPromptExample: "Tomorrow morning schedule calculus review for 90 minutes, afternoon English reading for 60 minutes, and evening review for 30 minutes.",
+    aiNote: "This prototype simulates AI with local rules. It recognizes keywords such as math, English, politics, review, meal, exercise, and project.",
+    generate: "Generate",
+    plannerSubtitle: "Dates across, time down. Drag task blocks into the grid.",
+    classPlannerTitle: "Class Planner",
+    classPlannerSubtitle: "Class/tag across, date down. Useful for checking category balance.",
+    timeCorner: "Time",
+    dateCorner: "Date",
+    minute: "min",
+    emptyUnscheduled: "Every task block has been scheduled at least once.",
+    emptyCurrentDate: "No tasks scheduled for this date.",
+    emptyStats: "Drag tasks in to generate stats.",
+    untagged: "Untagged",
+    unclassified: "Unclassified",
+    conflictTitle: "This time range overlaps another task on the same day",
+    detailTask: "Task",
+    detailCategory: "Category",
+    detailTime: "Time",
+    detailConflict: "Conflict",
+    conflictText: "This time range overlaps another task on the same day.",
+    detailNote: "Note",
+    noNote: "No note",
+    markUndone: "Mark Undone",
+    markDone: "Mark Done",
+    split: "Split",
+    earlier: "15m earlier",
+    later: "15m later",
+    shorter: "15m shorter",
+    longer: "15m longer",
+    postpone: "Postpone 1 day",
+    delete: "Delete",
+    generatedFrom: "Generated from",
+    importInvalid: "Import failed: this is not a valid BlockPlan JSON file.",
+    importDone: "Import complete.",
+    importParseError: "Import failed: the JSON file could not be parsed.",
+    resetConfirm: "Clear current data and restore the default examples? Export a backup first if needed.",
+    modes: { slot: "Time Block", point: "Time Point", day: "All Day", week: "Cross-week" },
+    classes: { 考研: "Exam Prep", 生活: "Life", 项目: "Project", 杂事: "Misc" },
+    weekdays: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
+    aiNames: {
+      math: "Math Review",
+      english: "English Practice",
+      politics: "Politics Practice",
+      meal: "Meal",
+      exercise: "Exercise",
+      project: "Project Work",
+      review: "Evening Review",
+      fallback: "New Task",
+    },
+    aiTags: {
+      math: ["Math"],
+      english: ["English"],
+      politics: ["Politics"],
+      meal: ["Meal"],
+      exercise: ["Exercise"],
+      project: ["Project"],
+      review: ["Review"],
+      fallback: ["AI"],
+    },
+  },
+};
 
 document.addEventListener("DOMContentLoaded", () => {
   cacheElements();
@@ -125,6 +345,7 @@ function cacheElements() {
     aiForm: document.querySelector("#aiForm"),
     aiPrompt: document.querySelector("#aiPrompt"),
     aiDraftButton: document.querySelector("#aiDraftButton"),
+    languageToggleButton: document.querySelector("#languageToggleButton"),
     exportDataButton: document.querySelector("#exportDataButton"),
     importDataButton: document.querySelector("#importDataButton"),
     resetDataButton: document.querySelector("#resetDataButton"),
@@ -137,6 +358,7 @@ function cacheElements() {
 
 function bindEvents() {
   els.addTemplateButton.addEventListener("click", () => openTemplateDialog());
+  els.languageToggleButton.addEventListener("click", toggleLanguage);
 
   els.templateForm.addEventListener("submit", (event) => {
     event.preventDefault();
@@ -154,6 +376,9 @@ function bindEvents() {
   els.aiForm.addEventListener("submit", (event) => {
     event.preventDefault();
     createAiDrafts();
+  });
+  els.aiPrompt.addEventListener("input", () => {
+    els.aiPrompt.dataset.touched = "true";
   });
 
   els.exportDataButton.addEventListener("click", exportData);
@@ -201,7 +426,14 @@ function bindEvents() {
   });
 }
 
+function toggleLanguage() {
+  language = language === "zh" ? "en" : "zh";
+  localStorage.setItem(LANG_STORAGE_KEY, language);
+  render();
+}
+
 function render() {
+  applyLanguageChrome();
   updateSegments();
   updateFocusChips();
   renderTemplates();
@@ -211,6 +443,65 @@ function render() {
   renderDetails();
   renderTodayList();
   renderStats();
+}
+
+function applyLanguageChrome() {
+  document.documentElement.lang = language === "en" ? "en" : "zh-CN";
+  document.title = language === "en" ? "BlockPlan Task Block Scheduler" : "BlockPlan 任务块排程器";
+  document.querySelector(".brand p").textContent = t("appSubtitle");
+  document.querySelector(".toolbar").setAttribute("aria-label", t("toolbarLabel"));
+  els.prevRange.title = t("previous");
+  els.prevRange.setAttribute("aria-label", t("previous"));
+  els.todayButton.title = t("today");
+  els.todayButton.setAttribute("aria-label", t("today"));
+  els.nextRange.title = t("next");
+  els.nextRange.setAttribute("aria-label", t("next"));
+  document.querySelector(".segmented").setAttribute("aria-label", t("viewSwitch"));
+  els.languageToggleButton.textContent = t("languageToggle");
+  els.languageToggleButton.title = t("languageTitle");
+  els.languageToggleButton.setAttribute("aria-label", t("languageTitle"));
+  els.aiDraftButton.textContent = t("aiGenerate");
+  els.addTemplateButton.textContent = t("addBlock");
+  els.exportDataButton.textContent = t("export");
+  els.importDataButton.textContent = t("import");
+  els.resetDataButton.textContent = t("reset");
+
+  setText(".library-panel .panel-head h2", t("library"));
+  setText(".library-panel .panel-head p", t("librarySubtitle"));
+  els.collapseLibrary.title = t("collapseLibrary");
+  els.collapseLibrary.setAttribute("aria-label", t("collapseLibrary"));
+  setText(".search-box span", t("search"));
+  els.templateSearch.placeholder = t("searchPlaceholder");
+  setText(".queue-panel .panel-head h2", t("queue"));
+  setText(".queue-panel .panel-head p", t("queueSubtitle"));
+  setText(".detail-panel .panel-head h2", t("detail"));
+  setText(".stats-panel .panel-head h2", t("stats"));
+  setText(".stats-panel .panel-head p", t("statsSubtitle"));
+
+  setText("#templateDialog label:nth-of-type(1) span", t("name"));
+  els.templateName.placeholder = t("namePlaceholder");
+  setText("#templateDialog label:nth-of-type(2) span", t("className"));
+  setText("#templateDialog label:nth-of-type(3) span", t("tags"));
+  els.templateTags.placeholder = t("tagsPlaceholder");
+  setText("#templateDialog label:nth-of-type(4) span", t("duration"));
+  setText("#templateDialog label:nth-of-type(5) span", t("color"));
+  setText("#templateDialog label:nth-of-type(6) span", t("mode"));
+  setText("#templateDialog label:nth-of-type(7) span", t("note"));
+  els.templateNote.placeholder = t("notePlaceholder");
+  document.querySelectorAll("[data-close-dialog]").forEach((button) => {
+    if (button.classList.contains("icon-button")) button.setAttribute("aria-label", t("close"));
+  });
+  document.querySelector("#templateDialog .dialog-actions .ghost-button").textContent = t("cancel");
+  document.querySelector("#saveTemplateButton").textContent = t("save");
+  translateTemplateClassOptions();
+  translateModeOptions();
+
+  setText("#aiDialog .dialog-head h2", t("aiDialogTitle"));
+  setText("#aiDialog .stacked span", t("aiPromptLabel"));
+  if (!els.aiPrompt.dataset.touched) els.aiPrompt.value = t("aiPromptExample");
+  setText("#aiDialog .dialog-note", t("aiNote"));
+  document.querySelector("#aiDialog .dialog-actions .ghost-button").textContent = t("cancel");
+  document.querySelector("#runAiButton").textContent = t("generate");
 }
 
 function renderTemplates() {
@@ -238,10 +529,10 @@ function renderTemplates() {
     card.innerHTML = `
       <div class="card-title">
         <span>${escapeHtml(template.name)}</span>
-        <span>${template.duration}m</span>
+        <span>${formatDuration(template.duration)}</span>
       </div>
       <div class="card-meta">
-        <span>${escapeHtml(template.className)}</span>
+        <span>${escapeHtml(displayClassName(template.className))}</span>
         <span>${modeLabel(template.mode)}</span>
       </div>
       <div class="card-tags">
@@ -267,7 +558,7 @@ function renderUnscheduled() {
   els.unscheduledList.innerHTML = "";
 
   if (!unscheduled.length) {
-    els.unscheduledList.innerHTML = `<div class="empty-state">所有任务块都至少安排过一次。</div>`;
+    els.unscheduledList.innerHTML = `<div class="empty-state">${t("emptyUnscheduled")}</div>`;
     return;
   }
 
@@ -279,9 +570,9 @@ function renderUnscheduled() {
     card.innerHTML = `
       <div class="card-title">
         <span>${escapeHtml(template.name)}</span>
-        <span>${template.duration}m</span>
+        <span>${formatDuration(template.duration)}</span>
       </div>
-      <div class="card-meta">${escapeHtml(template.className)} · ${escapeHtml(template.tags[0] || "未标记")}</div>
+      <div class="card-meta">${escapeHtml(displayClassName(template.className))} · ${escapeHtml(template.tags[0] || t("untagged"))}</div>
     `;
     card.addEventListener("click", () => quickSchedule(template.id));
     els.unscheduledList.append(card);
@@ -295,7 +586,7 @@ function renderLegend() {
       (className) => `
         <span class="legend-item">
           <i class="legend-dot" style="--legend-color:${classColors[className] || "#64748b"}"></i>
-          ${escapeHtml(className)}
+          ${escapeHtml(displayClassName(className))}
         </span>
       `,
     )
@@ -320,9 +611,9 @@ function renderTimePlanner() {
   grid.style.setProperty("--days", days.length);
 
   els.rangeTitle.textContent = state.view === "day" ? formatFullDate(days[0]) : `${formatMonthDay(days[0])} - ${formatMonthDay(days[days.length - 1])}`;
-  els.rangeSubtitle.textContent = "横轴日期，纵轴时间。拖动任务块到格子里。";
+  els.rangeSubtitle.textContent = t("plannerSubtitle");
 
-  const corner = createDiv("grid-corner", "Time");
+  const corner = createDiv("grid-corner", t("timeCorner"));
   corner.style.gridColumn = "1";
   corner.style.gridRow = "1";
   grid.append(corner);
@@ -370,7 +661,7 @@ function renderTimePlanner() {
     if (instance.id === state.selectedInstanceId) block.classList.add("is-selected");
     if (hasTimeConflict(instance)) {
       block.classList.add("has-conflict");
-      block.title = "这个时间段和同一天的其他任务重叠";
+      block.title = t("conflictTitle");
     }
     block.style.setProperty("--task-color", template.color);
     block.style.setProperty("--duration-hours", String(instance.duration / 60));
@@ -380,7 +671,7 @@ function renderTimePlanner() {
     block.innerHTML = `
       <strong>${escapeHtml(template.name)}</strong>
       <span>${formatMinutes(instance.start)} - ${formatMinutes(instance.start + instance.duration)}</span>
-      <em>${escapeHtml(template.className)} / ${escapeHtml(template.tags[0] || "未标记")}</em>
+      <em>${escapeHtml(displayClassName(template.className))} / ${escapeHtml(template.tags[0] || t("untagged"))}</em>
     `;
     block.addEventListener("click", (event) => {
       event.stopPropagation();
@@ -406,15 +697,15 @@ function renderClassPlanner() {
   grid.className = "class-grid";
   grid.style.setProperty("--classes", classNames.length);
 
-  els.rangeTitle.textContent = "分类排程";
-  els.rangeSubtitle.textContent = "横轴 class/tag，纵轴日期。适合检查大类之间的占比。";
+  els.rangeTitle.textContent = t("classPlannerTitle");
+  els.rangeSubtitle.textContent = t("classPlannerSubtitle");
 
-  const corner = createDiv("grid-corner", "Date");
+  const corner = createDiv("grid-corner", t("dateCorner"));
   corner.style.gridColumn = "1";
   corner.style.gridRow = "1";
   grid.append(corner);
   classNames.forEach((className, classIndex) => {
-    const header = createDiv("class-header", `<strong>${escapeHtml(className)}</strong><span>${countClassMinutes(className, days)} 分钟</span>`);
+    const header = createDiv("class-header", `<strong>${escapeHtml(displayClassName(className))}</strong><span>${formatDuration(countClassMinutes(className, days))}</span>`);
     header.style.gridColumn = String(classIndex + 2);
     header.style.gridRow = "1";
     grid.append(header);
@@ -452,7 +743,7 @@ function renderClassPlanner() {
     block.type = "button";
     block.className = "class-block";
     block.style.setProperty("--task-color", template.color);
-    block.innerHTML = `<strong>${escapeHtml(template.name)}</strong><span>${formatMinutes(instance.start)} · ${instance.duration} 分钟</span>`;
+    block.innerHTML = `<strong>${escapeHtml(template.name)}</strong><span>${formatMinutes(instance.start)} · ${formatDuration(instance.duration)}</span>`;
     block.addEventListener("click", () => selectInstance(instance.id));
     cell.append(block);
   });
@@ -461,9 +752,9 @@ function renderClassPlanner() {
 function renderDetails() {
   const instance = state.instances.find((item) => item.id === state.selectedInstanceId);
   if (!instance) {
-    els.detailHint.textContent = "选择一个任务块";
+    els.detailHint.textContent = t("detailHint");
     els.detailContent.className = "detail-content empty-state";
-    els.detailContent.innerHTML = "<p>点击日历里的任务，或从左侧拖入一个任务块。</p>";
+    els.detailContent.innerHTML = `<p>${t("detailEmpty")}</p>`;
     return;
   }
 
@@ -475,39 +766,39 @@ function renderDetails() {
   els.detailContent.innerHTML = `
     <div class="detail-grid">
       <div class="detail-row">
-        <span>任务</span>
+        <span>${t("detailTask")}</span>
         <strong>${escapeHtml(template.name)}</strong>
       </div>
       <div class="detail-row">
-        <span>分类</span>
-        <p>${escapeHtml(template.className)} / ${template.tags.map(escapeHtml).join(" / ")}</p>
+        <span>${t("detailCategory")}</span>
+        <p>${escapeHtml(displayClassName(template.className))} / ${template.tags.map(escapeHtml).join(" / ")}</p>
       </div>
       <div class="detail-row">
-        <span>时间</span>
+        <span>${t("detailTime")}</span>
         <p>${formatFullDate(instance.date)} ${formatMinutes(instance.start)} - ${formatMinutes(instance.start + instance.duration)}</p>
       </div>
       ${
         hasTimeConflict(instance)
           ? `<div class="detail-row conflict-row">
-              <span>冲突</span>
-              <p>这个时间段和同一天的其他任务重叠。</p>
+              <span>${t("detailConflict")}</span>
+              <p>${t("conflictText")}</p>
             </div>`
           : ""
       }
       <div class="detail-row">
-        <span>备注</span>
-        <p>${escapeHtml(template.note || "暂无备注")}</p>
+        <span>${t("detailNote")}</span>
+        <p>${escapeHtml(template.note || t("noNote"))}</p>
       </div>
     </div>
     <div class="detail-actions">
-      <button type="button" data-action="toggle">${instance.status === "done" ? "标为未完成" : "标为完成"}</button>
-      <button type="button" data-action="split">拆成两块</button>
-      <button type="button" data-action="earlier">提前15分</button>
-      <button type="button" data-action="later">延后15分</button>
-      <button type="button" data-action="shorter">缩短15分</button>
-      <button type="button" data-action="longer">延长15分</button>
-      <button type="button" data-action="postpone">推迟一天</button>
-      <button type="button" data-action="delete" class="danger">删除</button>
+      <button type="button" data-action="toggle">${instance.status === "done" ? t("markUndone") : t("markDone")}</button>
+      <button type="button" data-action="split">${t("split")}</button>
+      <button type="button" data-action="earlier">${t("earlier")}</button>
+      <button type="button" data-action="later">${t("later")}</button>
+      <button type="button" data-action="shorter">${t("shorter")}</button>
+      <button type="button" data-action="longer">${t("longer")}</button>
+      <button type="button" data-action="postpone">${t("postpone")}</button>
+      <button type="button" data-action="delete" class="danger">${t("delete")}</button>
     </div>
   `;
 
@@ -527,11 +818,11 @@ function renderTodayList() {
     .filter((instance) => instance.date === today)
     .sort((a, b) => a.start - b.start);
 
-  els.currentListTitle.textContent = "当前日清单";
-  els.currentListSubtitle.textContent = `${formatFullDate(today)} · 由排程自动生成`;
+  els.currentListTitle.textContent = t("currentList");
+  els.currentListSubtitle.textContent = `${formatFullDate(today)} · ${t("currentListSubtitle")}`;
   els.todayList.innerHTML = "";
   if (!instances.length) {
-    els.todayList.innerHTML = `<div class="empty-state">当前日期还没有安排。</div>`;
+    els.todayList.innerHTML = `<div class="empty-state">${t("emptyCurrentDate")}</div>`;
     return;
   }
 
@@ -543,7 +834,7 @@ function renderTodayList() {
     item.type = "button";
     item.style.setProperty("--task-color", template.color);
     if (hasTimeConflict(instance)) item.classList.add("has-conflict");
-    item.innerHTML = `<strong>${escapeHtml(template.name)}</strong><span>${formatMinutes(instance.start)} · ${escapeHtml(template.className)} · ${escapeHtml(template.tags[0] || "未标记")}</span>`;
+    item.innerHTML = `<strong>${escapeHtml(template.name)}</strong><span>${formatMinutes(instance.start)} · ${escapeHtml(displayClassName(template.className))} · ${escapeHtml(template.tags[0] || t("untagged"))}</span>`;
     item.addEventListener("click", () => selectInstance(instance.id));
     els.todayList.append(item);
   });
@@ -564,7 +855,7 @@ function renderStats() {
 
   els.statsList.innerHTML = "";
   if (!entries.length) {
-    els.statsList.innerHTML = `<div class="empty-state">拖入任务后会生成统计。</div>`;
+    els.statsList.innerHTML = `<div class="empty-state">${t("emptyStats")}</div>`;
     return;
   }
 
@@ -573,8 +864,8 @@ function renderStats() {
     row.className = "stat-row";
     row.innerHTML = `
       <div class="stat-label">
-        <span>${escapeHtml(className)}</span>
-        <strong>${minutes}m</strong>
+        <span>${escapeHtml(displayClassName(className))}</span>
+        <strong>${formatDuration(minutes)}</strong>
       </div>
       <div class="stat-bar">
         <i style="--value:${Math.round((minutes / max) * 100)}%; --stat-color:${classColors[className] || "#64748b"}"></i>
@@ -766,20 +1057,20 @@ async function importDataFromFile(event) {
     const parsed = JSON.parse(raw);
     const nextState = normalizeImportedState(parsed);
     if (!nextState) {
-      alert("导入失败：文件不是有效的 BlockPlan JSON。");
+      alert(t("importInvalid"));
       return;
     }
     state = nextState;
     saveState();
     render();
-    alert("导入完成。");
+    alert(t("importDone"));
   } catch {
-    alert("导入失败：JSON 文件无法解析。");
+    alert(t("importParseError"));
   }
 }
 
 function resetData() {
-  if (!confirm("确定要清空当前数据并恢复默认示例吗？建议先导出备份。")) return;
+  if (!confirm(t("resetConfirm"))) return;
   state = structuredClone(defaultState);
   state.anchorDate = isoDate(new Date());
   seedInstances();
@@ -789,7 +1080,7 @@ function resetData() {
 
 function openTemplateDialog(template = null) {
   els.templateDialog.dataset.editingId = template?.id || "";
-  document.querySelector("#dialogTitle").textContent = template ? "编辑任务块" : "新建任务块";
+  document.querySelector("#dialogTitle").textContent = template ? t("dialogEdit") : t("dialogNew");
   els.templateName.value = template?.name || "";
   els.templateClass.value = template?.className || "考研";
   els.templateTags.value = template?.tags.join(", ") || "";
@@ -839,7 +1130,7 @@ function createAiDrafts() {
       duration,
       color: draft.color,
       mode: "slot",
-      note: `由描述生成：${prompt}`,
+      note: `${t("generatedFrom")}: ${prompt}`,
     };
     state.templates.unshift(template);
     if (draft.date && draft.start !== null) {
@@ -860,17 +1151,17 @@ function createAiDrafts() {
 }
 
 function parseAiPrompt(prompt) {
-  const baseDate = prompt.includes("明天") ? shiftDate(state.anchorDate, 1) : state.anchorDate;
+  const baseDate = /明天|tomorrow/i.test(prompt) ? shiftDate(state.anchorDate, 1) : state.anchorDate;
   const chunks = prompt
-    .split(/[，。,；;]/)
+    .split(/[，。,；;.]/)
     .map((part) => part.trim())
     .filter(Boolean);
 
   const drafts = chunks.map((chunk, index) => {
-    const durationMatch = chunk.match(/(\d+)\s*(分钟|分|m|小时|h)/i);
+    const durationMatch = chunk.match(/(\d+)\s*(分钟|分|mins?|minutes?|m|小时|hours?|hrs?|h)/i);
     let duration = 60;
     if (durationMatch) {
-      duration = Number(durationMatch[1]) * (/小时|h/i.test(durationMatch[2]) ? 60 : 1);
+      duration = Number(durationMatch[1]) * (/小时|hours?|hrs?|h/i.test(durationMatch[2]) ? 60 : 1);
     }
 
     const bucket = inferBucket(chunk);
@@ -890,35 +1181,35 @@ function parseAiPrompt(prompt) {
 }
 
 function inferBucket(text) {
-  if (/高数|数学|线代|概率/.test(text)) {
-    return { name: "数学复习", className: "考研", tags: ["数学"], color: "#4f7cff" };
+  if (/高数|数学|线代|概率|math|calculus|linear algebra|probability/i.test(text)) {
+    return { name: t("aiNames.math"), className: "考研", tags: t("aiTags.math"), color: "#4f7cff" };
   }
-  if (/英语|阅读|单词/.test(text)) {
-    return { name: "英语训练", className: "考研", tags: ["英语"], color: "#22a06b" };
+  if (/英语|阅读|单词|english|reading|vocabulary|words?/i.test(text)) {
+    return { name: t("aiNames.english"), className: "考研", tags: t("aiTags.english"), color: "#22a06b" };
   }
-  if (/政治|肖|选择题/.test(text)) {
-    return { name: "政治刷题", className: "考研", tags: ["政治"], color: "#d94867" };
+  if (/政治|肖|选择题|politics|political|multiple choice/i.test(text)) {
+    return { name: t("aiNames.politics"), className: "考研", tags: t("aiTags.politics"), color: "#d94867" };
   }
-  if (/吃饭|午饭|晚饭|早餐/.test(text)) {
-    return { name: "吃饭", className: "生活", tags: ["吃饭"], color: "#0f9f6e" };
+  if (/吃饭|午饭|晚饭|早餐|meal|lunch|dinner|breakfast/i.test(text)) {
+    return { name: t("aiNames.meal"), className: "生活", tags: t("aiTags.meal"), color: "#0f9f6e" };
   }
-  if (/运动|跑步|健身/.test(text)) {
-    return { name: "运动", className: "生活", tags: ["运动"], color: "#14b8a6" };
+  if (/运动|跑步|健身|exercise|run|running|workout|fitness/i.test(text)) {
+    return { name: t("aiNames.exercise"), className: "生活", tags: t("aiTags.exercise"), color: "#14b8a6" };
   }
-  if (/项目|比赛|论文|资料/.test(text)) {
-    return { name: "项目推进", className: "项目", tags: ["项目"], color: "#d65f32" };
+  if (/项目|比赛|论文|资料|project|paper|thesis|資料|materials?/i.test(text)) {
+    return { name: t("aiNames.project"), className: "项目", tags: t("aiTags.project"), color: "#d65f32" };
   }
-  if (/复盘|总结|整理/.test(text)) {
-    return { name: "晚间复盘", className: "杂事", tags: ["复盘"], color: "#7c3aed" };
+  if (/复盘|总结|整理|review|summary|summarize|organize|reflection/i.test(text)) {
+    return { name: t("aiNames.review"), className: "杂事", tags: t("aiTags.review"), color: "#7c3aed" };
   }
-  return { name: text.slice(0, 14) || "新任务", className: "杂事", tags: ["AI"], color: "#7c3aed" };
+  return { name: text.slice(0, 18) || t("aiNames.fallback"), className: "杂事", tags: t("aiTags.fallback"), color: "#7c3aed" };
 }
 
 function inferStart(text, index) {
-  if (/上午|早上/.test(text)) return 9 * 60 + index * 15;
-  if (/中午|午饭/.test(text)) return 12 * 60;
-  if (/下午/.test(text)) return 14 * 60 + index * 15;
-  if (/晚上|晚间/.test(text)) return 20 * 60;
+  if (/上午|早上|morning|am/i.test(text)) return 9 * 60 + index * 15;
+  if (/中午|午饭|noon|lunch/i.test(text)) return 12 * 60;
+  if (/下午|afternoon|pm/i.test(text)) return 14 * 60 + index * 15;
+  if (/晚上|晚间|evening|night/i.test(text)) return 20 * 60;
   return 9 * 60 + index * 90;
 }
 
@@ -926,7 +1217,7 @@ function fallbackDraft(prompt) {
   return {
     name: prompt.slice(0, 18),
     className: "杂事",
-    tags: ["AI"],
+    tags: t("aiTags.fallback"),
     duration: 60,
     color: "#7c3aed",
     date: state.anchorDate,
@@ -967,12 +1258,14 @@ function updateSegments() {
     const active = button.dataset.view === state.view;
     button.classList.toggle("is-active", active);
     button.setAttribute("aria-selected", String(active));
+    button.textContent = t(`views.${button.dataset.view}`);
   });
 }
 
 function updateFocusChips() {
   document.querySelectorAll(".chip").forEach((button) => {
     button.classList.toggle("is-active", button.dataset.focus === state.focus);
+    button.textContent = t(`focus.${button.dataset.focus}`, displayClassName(button.dataset.focus));
   });
 }
 
@@ -1010,7 +1303,7 @@ function getVisibleInstances(days) {
 function getVisibleClasses() {
   const classNames = new Set(state.templates.map((template) => template.className));
   const result = Array.from(classNames).filter((className) => state.focus === "all" || className === state.focus);
-  return result.length ? result : ["未分类"];
+  return result.length ? result : [t("unclassified")];
 }
 
 function countClassMinutes(className, days) {
@@ -1026,12 +1319,7 @@ function getTemplate(id) {
 }
 
 function modeLabel(mode) {
-  return {
-    slot: "时间段",
-    point: "时间点",
-    day: "整天",
-    week: "跨周",
-  }[mode] || "时间段";
+  return t(`modes.${mode}`, t("modes.slot"));
 }
 
 function parseTags(value) {
@@ -1132,6 +1420,41 @@ function saveState() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
 }
 
+function loadLanguage() {
+  const stored = localStorage.getItem(LANG_STORAGE_KEY);
+  if (stored === "zh" || stored === "en") return stored;
+  return navigator.language?.toLowerCase().startsWith("zh") ? "zh" : DEFAULT_LANG;
+}
+
+function t(key, fallback = key) {
+  return key.split(".").reduce((value, part) => value?.[part], i18n[language]) ?? fallback;
+}
+
+function setText(selector, value) {
+  const element = document.querySelector(selector);
+  if (element) element.textContent = value;
+}
+
+function translateTemplateClassOptions() {
+  Array.from(els.templateClass.options).forEach((option) => {
+    option.textContent = displayClassName(option.value);
+  });
+}
+
+function translateModeOptions() {
+  Array.from(els.templateMode.options).forEach((option) => {
+    option.textContent = modeLabel(option.value);
+  });
+}
+
+function displayClassName(className) {
+  return t(`classes.${className}`, className);
+}
+
+function formatDuration(minutes) {
+  return language === "en" ? `${minutes} min` : `${minutes} 分钟`;
+}
+
 function uid() {
   if (typeof crypto !== "undefined" && crypto.randomUUID) return crypto.randomUUID();
   return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`;
@@ -1214,7 +1537,7 @@ function shiftDate(value, amount) {
 }
 
 function weekdayName(value) {
-  return ["周日", "周一", "周二", "周三", "周四", "周五", "周六"][parseIso(value).getDay()];
+  return t("weekdays")[parseIso(value).getDay()];
 }
 
 function formatMonthDay(value) {
@@ -1224,6 +1547,9 @@ function formatMonthDay(value) {
 
 function formatFullDate(value) {
   const date = parseIso(value);
+  if (language === "en") {
+    return date.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
+  }
   return `${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日`;
 }
 

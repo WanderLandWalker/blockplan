@@ -36,6 +36,7 @@
             <button class="segment" data-view="class" role="tab" aria-selected="false">类</button>
           </div>
 
+          <button class="ghost-button language-button" id="languageToggleButton" type="button">EN</button>
           <button class="primary-button" id="aiDraftButton">AI 生成</button>
           <button class="primary-button" id="addTemplateButton">新建块</button>
           <button class="ghost-button" id="exportDataButton" type="button">导出</button>
@@ -144,10 +145,10 @@
           <label>
             <span>大类</span>
             <select id="templateClass">
-              <option>考研</option>
-              <option>生活</option>
-              <option>项目</option>
-              <option>杂事</option>
+              <option value="考研">考研</option>
+              <option value="生活">生活</option>
+              <option value="项目">项目</option>
+              <option value="杂事">杂事</option>
             </select>
           </label>
           <label>
