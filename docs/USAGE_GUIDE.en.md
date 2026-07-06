@@ -30,10 +30,10 @@ Open [Releases](https://github.com/WanderLandWalker/blockplan/releases/latest), 
 
 | Use Case | Download |
 |----------|----------|
-| Regular Windows install | `BlockPlan-0.2.4-windows-setup.exe` |
-| Portable Windows app | `BlockPlan-0.2.4-windows-portable.exe` |
-| Android phone | `BlockPlan-0.2.4-android-debug.apk` |
-| Browser-only build | `BlockPlan-0.2.4-web.zip` |
+| Regular Windows install | `BlockPlan-0.2.5-windows-setup.exe` |
+| Portable Windows app | `BlockPlan-0.2.5-windows-portable.exe` |
+| Android phone | `BlockPlan-0.2.5-android-debug.apk` |
+| Browser-only build | `BlockPlan-0.2.5-web.zip` |
 
 Windows may warn that the publisher is unknown because the app is not code-signed yet. Android may ask you to allow installation from your browser or file manager.
 
@@ -47,7 +47,9 @@ On first launch, BlockPlan shows a three-step guide:
 2. Drag blocks into the planner.
 3. Click tasks to execute, adjust, and review.
 
-After closing it once, it will not keep appearing. You can reopen it later from the top `?` button.
+After closing it once, it will not keep appearing. You can reopen it later from the top `?` button. The `Show in-app guide` button expands the full walkthrough inside the same dialog, so it does not interrupt your planning flow or open another page.
+
+![In-app walkthrough](images/guide-in-app-en.png)
 
 ## Create task blocks
 

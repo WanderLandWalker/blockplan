@@ -30,10 +30,10 @@
 
 | 你想怎么用 | 下载 |
 |------------|------|
-| Windows 正常安装 | `BlockPlan-0.2.4-windows-setup.exe` |
-| Windows 免安装 | `BlockPlan-0.2.4-windows-portable.exe` |
-| Android 手机 | `BlockPlan-0.2.4-android-debug.apk` |
-| 浏览器打开 | `BlockPlan-0.2.4-web.zip` |
+| Windows 正常安装 | `BlockPlan-0.2.5-windows-setup.exe` |
+| Windows 免安装 | `BlockPlan-0.2.5-windows-portable.exe` |
+| Android 手机 | `BlockPlan-0.2.5-android-debug.apk` |
+| 浏览器打开 | `BlockPlan-0.2.5-web.zip` |
 
 Windows 如果提示未知发布者，确认文件来自本仓库 Release 后可以继续运行。Android 如果提示禁止安装，需要临时允许当前浏览器或文件管理器安装未知来源应用。
 
@@ -47,7 +47,9 @@ Windows 如果提示未知发布者，确认文件来自本仓库 Release 后可
 2. 把任务块拖进时间表。
 3. 点击任务执行、调整和复盘。
 
-关闭后不会反复弹出。以后想重新查看，可以点击顶部工具栏的 `?`。
+关闭后不会反复弹出。以后想重新查看，可以点击顶部工具栏的 `?`。点击弹窗里的“查看使用演示”会在当前弹窗内展开完整操作目录，不会跳出软件或打断当前计划。
+
+![应用内使用演示](images/guide-in-app.png)
 
 ## 创建任务块
 

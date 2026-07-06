@@ -10,7 +10,7 @@
 
 <p align="center">
   <a href="https://github.com/WanderLandWalker/blockplan/releases/latest">
-    <img src="https://img.shields.io/badge/Release-v0.2.4-blue?style=for-the-badge" alt="Release">
+    <img src="https://img.shields.io/badge/Release-v0.2.5-blue?style=for-the-badge" alt="Release">
   </a>
   <a href="LICENSE">
     <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="License">
@@ -66,7 +66,7 @@ BlockPlan 的定位更窄，也更直接：
 | 当前日清单 | 自动整理选中日期的任务，方便按顺序执行 |
 | 冲突提示 | 时间重叠时会提示，避免安排互相打架 |
 | 任务详情卡 | 点击日历或清单里的任务，可查看完整状态、时间、分类和备注 |
-| 首次使用引导 | 第一次打开会显示三步引导，也可随时点击顶部 `?` 打开 |
+| 内置使用演示 | 第一次打开会显示三步引导，也可点击顶部 `?` 在软件内查看完整演示 |
 | 双语界面 | 支持中文 / English 一键切换，语言偏好保存在本机 |
 | 深色模式 | 支持浅色 / 深色主题切换，并会记住你的偏好 |
 | 本地保存 | 数据保存在本机，支持 JSON 导入、导出和恢复默认示例 |
@@ -78,10 +78,10 @@ BlockPlan 的定位更窄，也更直接：
 
 | 文件 | 适合谁 | 说明 |
 |------|--------|------|
-| `BlockPlan-0.2.4-windows-setup.exe` | Windows 常用用户 | 安装到系统里，后续从开始菜单或桌面启动 |
-| `BlockPlan-0.2.4-windows-portable.exe` | 想免安装使用的人 | 双击即用，不写入安装目录 |
-| `BlockPlan-0.2.4-android-debug.apk` | Android 手机用户 | 下载到手机后安装使用 |
-| `BlockPlan-0.2.4-web.zip` | 只想用浏览器打开的人 | 解压后打开 `index.html` |
+| `BlockPlan-0.2.5-windows-setup.exe` | Windows 常用用户 | 安装到系统里，后续从开始菜单或桌面启动 |
+| `BlockPlan-0.2.5-windows-portable.exe` | 想免安装使用的人 | 双击即用，不写入安装目录 |
+| `BlockPlan-0.2.5-android-debug.apk` | Android 手机用户 | 下载到手机后安装使用 |
+| `BlockPlan-0.2.5-web.zip` | 只想用浏览器打开的人 | 解压后打开 `index.html` |
 
 不知道选哪个：
 
@@ -167,6 +167,7 @@ BlockPlan 的定位更窄，也更直接：
 
 | 版本 | 变化 |
 |:----:|------|
+| v0.2.5 | 使用演示改为软件内展开，不再通过外链打断使用流程 |
 | v0.2.4 | README 中英文拆分，新增图解指南、MIT 开源协议和软件内首次使用引导 |
 | v0.2.3 | 增加浅色 / 深色主题切换和完整深色模式适配，新增点击任务查看详情卡 |
 | v0.2.2 | 修复日历滚动时任务块遮住日期表头的问题，增加 sticky 表头层级和顶部渐隐遮罩 |

@@ -10,7 +10,7 @@
 
 <p align="center">
   <a href="https://github.com/WanderLandWalker/blockplan/releases/latest">
-    <img src="https://img.shields.io/badge/Release-v0.2.4-blue?style=for-the-badge" alt="Release">
+    <img src="https://img.shields.io/badge/Release-v0.2.5-blue?style=for-the-badge" alt="Release">
   </a>
   <a href="LICENSE">
     <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="License">
@@ -66,7 +66,7 @@ The key idea: you are not just filling a calendar. You are operating your own se
 | Current-day list | Automatically turns a selected day into an executable task list |
 | Conflict hints | Shows when tasks overlap on the same day |
 | Task detail cards | Click a scheduled task or day-list item to see full status, time, category, and notes |
-| First-run guide | A three-step guide opens on first launch and can be reopened from the top `?` button |
+| In-app guide | A three-step guide opens on first launch, and the top `?` button shows the full guide without leaving the app |
 | Bilingual UI | Switch between Chinese and English inside the app |
 | Dark mode | Switch between light and dark themes, with your preference saved locally |
 | Local-first data | Data stays on your device, with JSON import/export |
@@ -78,10 +78,10 @@ Download the latest version from [Releases](https://github.com/WanderLandWalker/
 
 | File | Best For | Description |
 |------|----------|-------------|
-| `BlockPlan-0.2.4-windows-setup.exe` | Regular Windows users | Installs BlockPlan so you can launch it from the system |
-| `BlockPlan-0.2.4-windows-portable.exe` | No-install usage | Double-click to run without installation |
-| `BlockPlan-0.2.4-android-debug.apk` | Android users | Install on an Android phone |
-| `BlockPlan-0.2.4-web.zip` | Browser-only usage | Unzip and open `index.html` |
+| `BlockPlan-0.2.5-windows-setup.exe` | Regular Windows users | Installs BlockPlan so you can launch it from the system |
+| `BlockPlan-0.2.5-windows-portable.exe` | No-install usage | Double-click to run without installation |
+| `BlockPlan-0.2.5-android-debug.apk` | Android users | Install on an Android phone |
+| `BlockPlan-0.2.5-web.zip` | Browser-only usage | Unzip and open `index.html` |
 
 Not sure which one to choose:
 
@@ -167,6 +167,7 @@ The current AI Draft feature is a local rule-based prototype, not an online mode
 
 | Version | Changes |
 |---------|---------|
+| v0.2.5 | Moves the usage walkthrough fully in-app, avoiding external-link interruptions during planning |
 | v0.2.4 | Splits Chinese and English READMEs, adds illustrated guides, MIT license, and in-app first-run guide |
 | v0.2.3 | Adds light / dark theme switching, complete dark-mode adaptation, and click-to-view task detail cards |
 | v0.2.2 | Fixes scheduled blocks visually covering sticky date headers while scrolling, with clearer layering and a soft top fade |

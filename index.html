@@ -167,8 +167,12 @@
             </div>
           </li>
         </ol>
+        <section class="guide-panel" id="guidePanel" hidden>
+          <div class="guide-tabs" id="guideTabs" role="tablist" aria-label="使用演示目录"></div>
+          <div class="guide-content" id="guideContent"></div>
+        </section>
         <footer class="dialog-actions">
-          <a class="ghost-button guide-link" id="guideLink" href="https://github.com/WanderLandWalker/blockplan/blob/main/docs/USAGE_GUIDE.md" target="_blank" rel="noreferrer">查看图解指南</a>
+          <button class="ghost-button" id="guideToggleButton" type="button">查看使用演示</button>
           <button class="primary-button" id="onboardingDoneButton" type="submit" value="done">开始使用</button>
         </footer>
       </form>

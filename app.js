@@ -88,6 +88,7 @@ const defaultState = {
 let state = loadState();
 let language = loadLanguage();
 let theme = loadTheme();
+let activeGuideTopic = "blocks";
 let dragTemplateId = null;
 let dragInstanceId = null;
 
@@ -111,8 +112,61 @@ const i18n = {
     onboardingStep2Body: "从模板库拖到周视图或日视图，任务就会拥有日期和时间。",
     onboardingStep3Title: "执行和复盘",
     onboardingStep3Body: "点击任务查看详情，右侧面板可以完成、拆分、延后或删除。",
-    onboardingGuide: "查看图解指南",
+    onboardingGuide: "查看使用演示",
+    onboardingGuideHide: "收起使用演示",
     onboardingDone: "开始使用",
+    guideTabsLabel: "使用演示目录",
+    guideTopics: [
+      {
+        id: "blocks",
+        tab: "任务块",
+        title: "先把常做的事做成任务块",
+        body: "点击新建块，填写名称、分类、标签、默认时长、颜色和备注。模板会留在左侧，以后可以反复拖出来用。",
+        tip: "建议把名称写成可执行动作，例如“英语阅读精练”或“项目资料整理”。",
+      },
+      {
+        id: "schedule",
+        tab: "拖拽",
+        title: "拖到时间格，计划就落地了",
+        body: "从左侧模板库按住任务块，拖到中间日历画布的具体日期和时间。松手后，它会变成一次已经安排好的任务。",
+        tip: "任务块高度会跟随时长变化，冲突任务会被标记出来。",
+      },
+      {
+        id: "details",
+        tab: "详情",
+        title: "点击任务查看完整详情",
+        body: "日历里的短任务可能只显示名称和时间。点击任务块或当前日清单里的任务，会弹出详情卡，显示状态、分类、完整时间和备注。",
+        tip: "详情卡用于快速查看；右侧详情面板负责修改任务。",
+      },
+      {
+        id: "adjust",
+        tab: "调整",
+        title: "在右侧面板调整和复盘",
+        body: "选择任务后，可以标为完成、拆分、提前、延后、缩短、延长、推迟一天或删除。当前日清单会自动按时间排序。",
+        tip: "删除只会删除这一次安排，不会删除左侧模板。",
+      },
+      {
+        id: "preferences",
+        tab: "偏好",
+        title: "语言和深色模式都保存在本机",
+        body: "顶部 EN / 中文 可以切换界面语言，◐ / ◑ 可以切换浅色和深色模式。你的任务名称、备注和标签不会被自动翻译。",
+        tip: "第一次打开会跟随系统主题，手动切换后会记住选择。",
+      },
+      {
+        id: "backup",
+        tab: "备份",
+        title: "用导入导出保护你的计划",
+        body: "导出会把任务块和排程保存成 JSON 文件；导入可以恢复；重置会清空当前数据并恢复默认示例。",
+        tip: "清缓存、换浏览器、卸载应用或换设备前，先导出一份 JSON。",
+      },
+      {
+        id: "ai",
+        tab: "AI 草稿",
+        title: "AI 生成是本地规则草稿",
+        body: "输入自然语言描述，BlockPlan 会识别常见任务关键词和时间表达，快速创建任务块和排程草稿。",
+        tip: "当前不会调用在线大模型，更适合当作快速录入入口。",
+      },
+    ],
     toolbarLabel: "排程工具栏",
     previous: "上一段时间",
     today: "回到今天",
@@ -237,8 +291,61 @@ const i18n = {
     onboardingStep2Body: "Drag a block from the template library into week or day view to give it a date and time.",
     onboardingStep3Title: "Execute and review",
     onboardingStep3Body: "Click a task for details. Use the right panel to mark done, split, postpone, or delete.",
-    onboardingGuide: "Open illustrated guide",
+    onboardingGuide: "Show in-app guide",
+    onboardingGuideHide: "Hide in-app guide",
     onboardingDone: "Start planning",
+    guideTabsLabel: "Guide sections",
+    guideTopics: [
+      {
+        id: "blocks",
+        tab: "Blocks",
+        title: "Turn recurring work into task blocks",
+        body: "Click New Block, then fill in the name, class, tags, default duration, color, and note. The template stays in the left library for reuse.",
+        tip: "Use actionable names such as English reading or Project research.",
+      },
+      {
+        id: "schedule",
+        tab: "Drag",
+        title: "Drag into a time slot to make the plan real",
+        body: "Hold a block from the template library, drag it onto a date and time in the planner canvas, then release. It becomes a scheduled task instance.",
+        tip: "Task height follows duration, and overlapping tasks are marked as conflicts.",
+      },
+      {
+        id: "details",
+        tab: "Details",
+        title: "Click a task to see complete details",
+        body: "Short task cards may only show name and time. Click a scheduled task or current-day item to open a card with status, category, full time, and notes.",
+        tip: "The popover is for viewing; use the right detail panel to edit.",
+      },
+      {
+        id: "adjust",
+        tab: "Adjust",
+        title: "Use the right panel to adjust and review",
+        body: "After selecting a task, mark it done, split it, move it earlier/later, resize it, postpone it, or delete it. The current-day list stays sorted by time.",
+        tip: "Delete removes only this scheduled instance, not the original template.",
+      },
+      {
+        id: "preferences",
+        tab: "Prefs",
+        title: "Language and theme preferences stay local",
+        body: "Use EN / 中文 to switch language, and ◐ / ◑ to switch light or dark mode. User-created names, notes, and tags are not auto-translated.",
+        tip: "BlockPlan follows system theme at first launch, then remembers your manual choice.",
+      },
+      {
+        id: "backup",
+        tab: "Backup",
+        title: "Protect your plan with import and export",
+        body: "Export saves task blocks and schedules as JSON. Import restores them. Reset clears current data and restores default examples.",
+        tip: "Export before clearing cache, switching browsers, uninstalling, or moving devices.",
+      },
+      {
+        id: "ai",
+        tab: "AI Draft",
+        title: "AI Draft is local rule-based drafting",
+        body: "Describe your plan in natural language. BlockPlan recognizes common task keywords and timing phrases to create blocks and draft schedules.",
+        tip: "The current version does not call an online model; treat it as fast input.",
+      },
+    ],
     toolbarLabel: "Planner toolbar",
     previous: "Previous range",
     today: "Today",
@@ -393,7 +500,10 @@ function cacheElements() {
     helpButton: document.querySelector("#helpButton"),
     onboardingDialog: document.querySelector("#onboardingDialog"),
     onboardingDoneButton: document.querySelector("#onboardingDoneButton"),
-    guideLink: document.querySelector("#guideLink"),
+    guideToggleButton: document.querySelector("#guideToggleButton"),
+    guidePanel: document.querySelector("#guidePanel"),
+    guideTabs: document.querySelector("#guideTabs"),
+    guideContent: document.querySelector("#guideContent"),
     exportDataButton: document.querySelector("#exportDataButton"),
     importDataButton: document.querySelector("#importDataButton"),
     resetDataButton: document.querySelector("#resetDataButton"),
@@ -409,6 +519,7 @@ function bindEvents() {
   els.languageToggleButton.addEventListener("click", toggleLanguage);
   els.themeToggleButton.addEventListener("click", toggleTheme);
   els.helpButton.addEventListener("click", openOnboarding);
+  els.guideToggleButton.addEventListener("click", toggleGuidePanel);
   els.onboardingDialog.addEventListener("close", () => {
     localStorage.setItem(ONBOARDING_STORAGE_KEY, "1");
   });
@@ -517,6 +628,43 @@ function openOnboarding() {
   }
 }
 
+function toggleGuidePanel() {
+  els.guidePanel.hidden = !els.guidePanel.hidden;
+  els.guideToggleButton.textContent = els.guidePanel.hidden ? t("onboardingGuide") : t("onboardingGuideHide");
+  renderGuidePanel();
+}
+
+function renderGuidePanel() {
+  if (!els.guideTabs || !els.guideContent) return;
+  const topics = t("guideTopics", []);
+  if (!Array.isArray(topics) || !topics.length) return;
+  if (!topics.some((topic) => topic.id === activeGuideTopic)) {
+    activeGuideTopic = topics[0].id;
+  }
+
+  els.guideTabs.innerHTML = "";
+  topics.forEach((topic) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = `guide-tab${topic.id === activeGuideTopic ? " is-active" : ""}`;
+    button.setAttribute("role", "tab");
+    button.setAttribute("aria-selected", String(topic.id === activeGuideTopic));
+    button.textContent = topic.tab;
+    button.addEventListener("click", () => {
+      activeGuideTopic = topic.id;
+      renderGuidePanel();
+    });
+    els.guideTabs.append(button);
+  });
+
+  const topic = topics.find((item) => item.id === activeGuideTopic) || topics[0];
+  els.guideContent.innerHTML = `
+    <h3>${escapeHtml(topic.title)}</h3>
+    <p>${escapeHtml(topic.body)}</p>
+    <div class="guide-tip">${escapeHtml(topic.tip)}</div>
+  `;
+}
+
 function render() {
   hideTaskDetailPopover();
   applyTheme();
@@ -603,8 +751,10 @@ function applyLanguageChrome() {
   setText("#onboardingStep2Body", t("onboardingStep2Body"));
   setText("#onboardingStep3Title", t("onboardingStep3Title"));
   setText("#onboardingStep3Body", t("onboardingStep3Body"));
-  els.guideLink.textContent = t("onboardingGuide");
+  els.guideTabs.setAttribute("aria-label", t("guideTabsLabel"));
+  els.guideToggleButton.textContent = els.guidePanel.hidden ? t("onboardingGuide") : t("onboardingGuideHide");
   els.onboardingDoneButton.textContent = t("onboardingDone");
+  renderGuidePanel();
 }
 
 function renderTemplates() {

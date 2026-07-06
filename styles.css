@@ -1127,7 +1127,7 @@ textarea {
 }
 
 .onboarding-dialog {
-  width: min(720px, calc(100vw - 24px));
+  width: min(760px, calc(100vw - 24px));
 }
 
 .onboarding-steps {
@@ -1171,6 +1171,72 @@ textarea {
   color: var(--muted);
   font-size: 12px;
   line-height: 1.55;
+}
+
+.guide-panel {
+  display: grid;
+  gap: 12px;
+}
+
+.guide-panel[hidden] {
+  display: none;
+}
+
+.guide-tabs {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+}
+
+.guide-tab {
+  flex: 0 0 auto;
+  min-height: 32px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--control-bg);
+  color: var(--muted);
+  padding: 0 10px;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.guide-tab.is-active {
+  border-color: var(--primary-border);
+  background: var(--chip-active-bg);
+  color: var(--chip-active-text);
+}
+
+.guide-content {
+  display: grid;
+  gap: 8px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface-2);
+}
+
+.guide-content h3 {
+  margin: 0;
+  color: var(--text);
+  font-size: 15px;
+}
+
+.guide-content p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.guide-tip {
+  padding: 9px 10px;
+  border-left: 3px solid var(--accent);
+  border-radius: 6px;
+  background: var(--chip-active-bg);
+  color: var(--text);
+  font-size: 12px;
+  line-height: 1.5;
 }
 
 .library-collapsed {
