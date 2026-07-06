@@ -1,6 +1,7 @@
 const STORAGE_KEY = "blockplan-prototype-v1";
 const LANG_STORAGE_KEY = "blockplan-language";
 const THEME_STORAGE_KEY = "blockplan-theme";
+const ONBOARDING_STORAGE_KEY = "blockplan-onboarding-seen";
 const EXPORT_VERSION = 1;
 const MINUTES_PER_DAY = 24 * 60;
 const DAY_START_HOUR = 0;
@@ -101,6 +102,17 @@ const i18n = {
     themeLight: "浅色模式",
     switchToDark: "切换到深色模式",
     switchToLight: "切换到浅色模式",
+    helpTitle: "使用指南",
+    onboardingTitle: "三步开始使用 BlockPlan",
+    onboardingSubtitle: "把常做的事做成块，再拖进时间表。",
+    onboardingStep1Title: "先建任务块",
+    onboardingStep1Body: "点击新建块，保存名称、分类、标签、颜色和默认时长。",
+    onboardingStep2Title: "拖到时间格",
+    onboardingStep2Body: "从模板库拖到周视图或日视图，任务就会拥有日期和时间。",
+    onboardingStep3Title: "执行和复盘",
+    onboardingStep3Body: "点击任务查看详情，右侧面板可以完成、拆分、延后或删除。",
+    onboardingGuide: "查看图解指南",
+    onboardingDone: "开始使用",
     toolbarLabel: "排程工具栏",
     previous: "上一段时间",
     today: "回到今天",
@@ -216,6 +228,17 @@ const i18n = {
     themeLight: "Light mode",
     switchToDark: "Switch to dark mode",
     switchToLight: "Switch to light mode",
+    helpTitle: "User guide",
+    onboardingTitle: "Start BlockPlan in three steps",
+    onboardingSubtitle: "Turn recurring work into blocks, then place them on your planner.",
+    onboardingStep1Title: "Create task blocks",
+    onboardingStep1Body: "Use New Block to save the name, class, tags, color, and default duration.",
+    onboardingStep2Title: "Drag into time",
+    onboardingStep2Body: "Drag a block from the template library into week or day view to give it a date and time.",
+    onboardingStep3Title: "Execute and review",
+    onboardingStep3Body: "Click a task for details. Use the right panel to mark done, split, postpone, or delete.",
+    onboardingGuide: "Open illustrated guide",
+    onboardingDone: "Start planning",
     toolbarLabel: "Planner toolbar",
     previous: "Previous range",
     today: "Today",
@@ -330,6 +353,7 @@ document.addEventListener("DOMContentLoaded", () => {
   seedInstances();
   bindEvents();
   render();
+  showOnboardingIfNeeded();
 });
 
 function cacheElements() {
@@ -366,6 +390,10 @@ function cacheElements() {
     aiDraftButton: document.querySelector("#aiDraftButton"),
     languageToggleButton: document.querySelector("#languageToggleButton"),
     themeToggleButton: document.querySelector("#themeToggleButton"),
+    helpButton: document.querySelector("#helpButton"),
+    onboardingDialog: document.querySelector("#onboardingDialog"),
+    onboardingDoneButton: document.querySelector("#onboardingDoneButton"),
+    guideLink: document.querySelector("#guideLink"),
     exportDataButton: document.querySelector("#exportDataButton"),
     importDataButton: document.querySelector("#importDataButton"),
     resetDataButton: document.querySelector("#resetDataButton"),
@@ -380,6 +408,10 @@ function bindEvents() {
   els.addTemplateButton.addEventListener("click", () => openTemplateDialog());
   els.languageToggleButton.addEventListener("click", toggleLanguage);
   els.themeToggleButton.addEventListener("click", toggleTheme);
+  els.helpButton.addEventListener("click", openOnboarding);
+  els.onboardingDialog.addEventListener("close", () => {
+    localStorage.setItem(ONBOARDING_STORAGE_KEY, "1");
+  });
 
   els.templateForm.addEventListener("submit", (event) => {
     event.preventDefault();
@@ -473,6 +505,18 @@ function toggleTheme() {
   applyLanguageChrome();
 }
 
+function showOnboardingIfNeeded() {
+  if (localStorage.getItem(ONBOARDING_STORAGE_KEY) === "1") return;
+  window.setTimeout(openOnboarding, 350);
+}
+
+function openOnboarding() {
+  applyLanguageChrome();
+  if (!els.onboardingDialog.open) {
+    els.onboardingDialog.showModal();
+  }
+}
+
 function render() {
   hideTaskDetailPopover();
   applyTheme();
@@ -506,6 +550,8 @@ function applyLanguageChrome() {
   els.themeToggleButton.textContent = theme === "dark" ? "◑" : "◐";
   els.themeToggleButton.title = theme === "dark" ? t("switchToLight") : t("switchToDark");
   els.themeToggleButton.setAttribute("aria-label", els.themeToggleButton.title);
+  els.helpButton.title = t("helpTitle");
+  els.helpButton.setAttribute("aria-label", t("helpTitle"));
   els.aiDraftButton.textContent = t("aiGenerate");
   els.addTemplateButton.textContent = t("addBlock");
   els.exportDataButton.textContent = t("export");
@@ -548,6 +594,17 @@ function applyLanguageChrome() {
   setText("#aiDialog .dialog-note", t("aiNote"));
   document.querySelector("#aiDialog .dialog-actions .ghost-button").textContent = t("cancel");
   document.querySelector("#runAiButton").textContent = t("generate");
+
+  setText("#onboardingTitle", t("onboardingTitle"));
+  setText("#onboardingSubtitle", t("onboardingSubtitle"));
+  setText("#onboardingStep1Title", t("onboardingStep1Title"));
+  setText("#onboardingStep1Body", t("onboardingStep1Body"));
+  setText("#onboardingStep2Title", t("onboardingStep2Title"));
+  setText("#onboardingStep2Body", t("onboardingStep2Body"));
+  setText("#onboardingStep3Title", t("onboardingStep3Title"));
+  setText("#onboardingStep3Body", t("onboardingStep3Body"));
+  els.guideLink.textContent = t("onboardingGuide");
+  els.onboardingDoneButton.textContent = t("onboardingDone");
 }
 
 function renderTemplates() {

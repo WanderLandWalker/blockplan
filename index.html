@@ -38,6 +38,7 @@
 
           <button class="ghost-button language-button" id="languageToggleButton" type="button">EN</button>
           <button class="icon-button theme-button" id="themeToggleButton" type="button" aria-label="切换深色模式">◐</button>
+          <button class="icon-button help-button" id="helpButton" type="button" aria-label="使用指南">?</button>
           <button class="primary-button" id="aiDraftButton">AI 生成</button>
           <button class="primary-button" id="addTemplateButton">新建块</button>
           <button class="ghost-button" id="exportDataButton" type="button">导出</button>
@@ -133,6 +134,45 @@
     </div>
 
     <div class="task-detail-popover" id="taskDetailPopover" role="dialog" aria-modal="false" hidden></div>
+
+    <dialog id="onboardingDialog" class="dialog onboarding-dialog">
+      <form method="dialog">
+        <header class="dialog-head">
+          <div>
+            <h2 id="onboardingTitle">三步开始使用 BlockPlan</h2>
+            <p id="onboardingSubtitle">把常做的事做成块，再拖进时间表。</p>
+          </div>
+          <button class="icon-button" type="button" data-close-dialog aria-label="关闭">×</button>
+        </header>
+        <ol class="onboarding-steps">
+          <li>
+            <span class="step-index">1</span>
+            <div>
+              <strong id="onboardingStep1Title">先建任务块</strong>
+              <p id="onboardingStep1Body">点击新建块，保存名称、分类、标签、颜色和默认时长。</p>
+            </div>
+          </li>
+          <li>
+            <span class="step-index">2</span>
+            <div>
+              <strong id="onboardingStep2Title">拖到时间格</strong>
+              <p id="onboardingStep2Body">从模板库拖到周视图或日视图，任务就会拥有日期和时间。</p>
+            </div>
+          </li>
+          <li>
+            <span class="step-index">3</span>
+            <div>
+              <strong id="onboardingStep3Title">执行和复盘</strong>
+              <p id="onboardingStep3Body">点击任务查看详情，右侧面板可以完成、拆分、延后或删除。</p>
+            </div>
+          </li>
+        </ol>
+        <footer class="dialog-actions">
+          <a class="ghost-button guide-link" id="guideLink" href="https://github.com/WanderLandWalker/blockplan/blob/main/docs/USAGE_GUIDE.md" target="_blank" rel="noreferrer">查看图解指南</a>
+          <button class="primary-button" id="onboardingDoneButton" type="submit" value="done">开始使用</button>
+        </footer>
+      </form>
+    </dialog>
 
     <dialog id="templateDialog" class="dialog">
       <form method="dialog" id="templateForm">
