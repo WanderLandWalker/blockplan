@@ -2,5 +2,5 @@ const { contextBridge } = require("electron");
 
 contextBridge.exposeInMainWorld("blockplanShell", {
   platform: "windows",
-  version: "0.2.6",
+  version: "0.2.7",
 });

@@ -626,16 +626,23 @@ function openOnboarding() {
   if (!els.onboardingDialog.open) {
     els.onboardingDialog.showModal();
   }
+  if (!els.guidePanel.hidden && els.onboardingDialog.open) {
+    renderGuidePanel();
+  }
 }
 
 function toggleGuidePanel() {
   els.guidePanel.hidden = !els.guidePanel.hidden;
   els.guideToggleButton.textContent = els.guidePanel.hidden ? t("onboardingGuide") : t("onboardingGuideHide");
-  renderGuidePanel();
+  if (!els.guidePanel.hidden && els.onboardingDialog.open) {
+    renderGuidePanel();
+  }
 }
 
 function renderGuidePanel() {
   if (!els.guideTabs || !els.guideContent) return;
+  if (els.guidePanel.hidden) return;
+  if (!els.onboardingDialog.open) return;
   const topics = t("guideTopics", []);
   if (!Array.isArray(topics) || !topics.length) return;
   if (!topics.some((topic) => topic.id === activeGuideTopic)) {
@@ -828,7 +835,9 @@ function applyLanguageChrome() {
   els.guideTabs.setAttribute("aria-label", t("guideTabsLabel"));
   els.guideToggleButton.textContent = els.guidePanel.hidden ? t("onboardingGuide") : t("onboardingGuideHide");
   els.onboardingDoneButton.textContent = t("onboardingDone");
-  renderGuidePanel();
+  if (!els.guidePanel.hidden && els.onboardingDialog.open) {
+    renderGuidePanel();
+  }
 }
 
 function renderTemplates() {

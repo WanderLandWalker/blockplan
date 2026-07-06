@@ -1182,6 +1182,11 @@ textarea {
   display: none;
 }
 
+.onboarding-dialog:not([open]) .guide-visual *,
+.guide-panel[hidden] .guide-visual * {
+  animation-play-state: paused;
+}
+
 .guide-tabs {
   display: flex;
   gap: 6px;
