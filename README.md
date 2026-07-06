@@ -11,7 +11,7 @@
 
 <p align="center">
   <a href="https://github.com/WanderLandWalker/blockplan/releases/latest">
-    <img src="https://img.shields.io/badge/Release-v0.2.1-blue?style=for-the-badge" alt="Release">
+    <img src="https://img.shields.io/badge/Release-v0.2.2-blue?style=for-the-badge" alt="Release">
   </a>
   <img src="https://img.shields.io/badge/Windows-ready-2563eb?style=for-the-badge" alt="Windows">
   <img src="https://img.shields.io/badge/Android-ready-16a34a?style=for-the-badge" alt="Android">
@@ -77,10 +77,10 @@ BlockPlan 的定位更窄，也更直接：
 
 | 文件 | 适合谁 | 说明 |
 |------|--------|------|
-| `BlockPlan-0.2.1-windows-setup.exe` | Windows 常用用户 | 安装到系统里，后续从开始菜单或桌面启动 |
-| `BlockPlan-0.2.1-windows-portable.exe` | 想免安装使用的人 | 双击即用，不写入安装目录 |
-| `BlockPlan-0.2.1-android-debug.apk` | Android 手机用户 | 下载到手机后安装使用 |
-| `BlockPlan-0.2.1-web.zip` | 只想用浏览器打开的人 | 解压后打开 `index.html` |
+| `BlockPlan-0.2.2-windows-setup.exe` | Windows 常用用户 | 安装到系统里，后续从开始菜单或桌面启动 |
+| `BlockPlan-0.2.2-windows-portable.exe` | 想免安装使用的人 | 双击即用，不写入安装目录 |
+| `BlockPlan-0.2.2-android-debug.apk` | Android 手机用户 | 下载到手机后安装使用 |
+| `BlockPlan-0.2.2-web.zip` | 只想用浏览器打开的人 | 解压后打开 `index.html` |
 
 不知道选哪个：
 
@@ -192,6 +192,7 @@ BlockPlan 的定位更窄，也更直接：
 
 | 版本 | 变化 |
 |:----:|------|
+| v0.2.2 | 修复日历滚动时任务块遮住日期表头的问题，增加 sticky 表头层级和顶部渐隐遮罩 |
 | v0.2.1 | 增加中文 / English 双语界面、英文 README、英文 AI 草稿解析和更完整的用户使用说明 |
 | v0.2.0 | 首个公开预览版，支持 Web、Windows、Android，包含任务块模板、拖拽排程、导入导出和冲突提示 |
 
@@ -283,10 +284,10 @@ Download the latest version from [Releases](https://github.com/WanderLandWalker/
 
 | File | Best For | Description |
 |------|----------|-------------|
-| `BlockPlan-0.2.1-windows-setup.exe` | Regular Windows users | Installs BlockPlan so you can launch it from the system |
-| `BlockPlan-0.2.1-windows-portable.exe` | No-install usage | Double-click to run without installation |
-| `BlockPlan-0.2.1-android-debug.apk` | Android users | Install on an Android phone |
-| `BlockPlan-0.2.1-web.zip` | Browser-only usage | Unzip and open `index.html` |
+| `BlockPlan-0.2.2-windows-setup.exe` | Regular Windows users | Installs BlockPlan so you can launch it from the system |
+| `BlockPlan-0.2.2-windows-portable.exe` | No-install usage | Double-click to run without installation |
+| `BlockPlan-0.2.2-android-debug.apk` | Android users | Install on an Android phone |
+| `BlockPlan-0.2.2-web.zip` | Browser-only usage | Unzip and open `index.html` |
 
 Not sure which one to choose:
 
@@ -389,6 +390,7 @@ The current AI Draft feature is a local rule-based prototype, not an online mode
 
 | Version | Changes |
 |---------|---------|
+| v0.2.2 | Fixes scheduled blocks visually covering sticky date headers while scrolling, with clearer layering and a soft top fade |
 | v0.2.1 | Adds Chinese / English UI switching, English README content, English AI draft parsing, and clearer user instructions |
 | v0.2.0 | First public preview for Web, Windows, and Android with templates, drag-and-drop scheduling, import/export, and conflict hints |
 
