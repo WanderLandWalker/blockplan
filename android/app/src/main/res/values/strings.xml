@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">BlockPlan</string>
+    <string name="title_activity_main">BlockPlan</string>
+    <string name="package_name">com.blockplan.app</string>
+    <string name="custom_url_scheme">com.blockplan.app</string>
+</resources>

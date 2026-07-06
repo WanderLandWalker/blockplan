@@ -1,0 +1,11 @@
+node_modules/
+dist/
+release/
+.claude/
+PRODUCT_ITERATION.md
+android/.gradle/
+android/app/build/
+android/build/
+android/captures/
+android/local.properties
+*.log

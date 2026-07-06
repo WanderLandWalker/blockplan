@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#2563eb" />
+    <title>BlockPlan 任务块排程器</title>
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <div class="brand">
+          <div class="brand-mark" aria-hidden="true">BP</div>
+          <div>
+            <h1>BlockPlan</h1>
+            <p>任务块排程器</p>
+          </div>
+        </div>
+
+        <div class="toolbar" aria-label="排程工具栏">
+          <button class="icon-button" id="prevRange" title="上一段时间" aria-label="上一段时间">
+            <span aria-hidden="true">‹</span>
+          </button>
+          <button class="icon-button" id="todayButton" title="回到今天" aria-label="回到今天">
+            <span aria-hidden="true">◎</span>
+          </button>
+          <button class="icon-button" id="nextRange" title="下一段时间" aria-label="下一段时间">
+            <span aria-hidden="true">›</span>
+          </button>
+
+          <div class="segmented" role="tablist" aria-label="视图切换">
+            <button class="segment is-active" data-view="week" role="tab" aria-selected="true">周</button>
+            <button class="segment" data-view="day" role="tab" aria-selected="false">日</button>
+            <button class="segment" data-view="class" role="tab" aria-selected="false">类</button>
+          </div>
+
+          <button class="primary-button" id="aiDraftButton">AI 生成</button>
+          <button class="primary-button" id="addTemplateButton">新建块</button>
+          <button class="ghost-button" id="exportDataButton" type="button">导出</button>
+          <button class="ghost-button" id="importDataButton" type="button">导入</button>
+          <button class="ghost-button danger-button" id="resetDataButton" type="button">重置</button>
+          <input class="visually-hidden" id="importDataInput" type="file" accept="application/json,.json" />
+        </div>
+      </header>
+
+      <main class="workspace">
+        <aside class="task-library" aria-label="模板库">
+          <section class="panel library-panel">
+            <div class="panel-head">
+              <div>
+                <h2>模板库</h2>
+                <p>先建块，再拖进时间表</p>
+              </div>
+              <button class="mini-button" id="collapseLibrary" title="收起模板库" aria-label="收起模板库">⇤</button>
+            </div>
+
+            <label class="search-box">
+              <span>搜索</span>
+              <input id="templateSearch" type="search" placeholder="数学 / 吃饭 / 论文" />
+            </label>
+
+            <div class="focus-row">
+              <button class="chip is-active" data-focus="all">全部</button>
+              <button class="chip" data-focus="考研">考研</button>
+              <button class="chip" data-focus="生活">生活</button>
+              <button class="chip" data-focus="项目">项目</button>
+            </div>
+
+            <div class="template-list" id="templateList"></div>
+          </section>
+
+          <section class="panel queue-panel">
+            <div class="panel-head">
+              <div>
+                <h2>待安排</h2>
+                <p>模板还没生成过实例</p>
+              </div>
+            </div>
+            <div id="unscheduledList" class="unscheduled-list"></div>
+          </section>
+        </aside>
+
+        <section class="planner-area">
+          <div class="planner-head">
+            <div>
+              <h2 id="rangeTitle">本周排程</h2>
+              <p id="rangeSubtitle">横轴日期，纵轴时间。拖动任务块到格子里。</p>
+            </div>
+            <div class="legend" id="legend"></div>
+          </div>
+
+          <div id="plannerCanvas" class="planner-canvas" aria-label="排程画布"></div>
+        </section>
+
+        <aside class="detail-drawer" aria-label="详情和统计">
+          <section class="panel detail-panel">
+            <div class="panel-head">
+              <div>
+                <h2>详情</h2>
+                <p id="detailHint">选择一个任务块</p>
+              </div>
+            </div>
+            <div id="detailContent" class="detail-content empty-state">
+              <p>点击日历里的任务，或从左侧拖入一个任务块。</p>
+            </div>
+          </section>
+
+          <section class="panel today-panel">
+            <div class="panel-head">
+              <div>
+                <h2 id="currentListTitle">当前日清单</h2>
+                <p id="currentListSubtitle">由当前日期任务自动生成</p>
+              </div>
+            </div>
+            <div id="todayList" class="today-list"></div>
+          </section>
+
+          <section class="panel stats-panel">
+            <div class="panel-head">
+              <div>
+                <h2>统计</h2>
+                <p>按大类汇总已排时间</p>
+              </div>
+            </div>
+            <div id="statsList" class="stats-list"></div>
+          </section>
+        </aside>
+      </main>
+    </div>
+
+    <dialog id="templateDialog" class="dialog">
+      <form method="dialog" id="templateForm">
+        <header class="dialog-head">
+          <h2 id="dialogTitle">新建任务块</h2>
+          <button class="icon-button" type="button" data-close-dialog aria-label="关闭">×</button>
+        </header>
+        <div class="form-grid">
+          <label>
+            <span>名称</span>
+            <input id="templateName" required maxlength="40" placeholder="高数第三章复习" />
+          </label>
+          <label>
+            <span>大类</span>
+            <select id="templateClass">
+              <option>考研</option>
+              <option>生活</option>
+              <option>项目</option>
+              <option>杂事</option>
+            </select>
+          </label>
+          <label>
+            <span>子类 / tag</span>
+            <input id="templateTags" maxlength="80" placeholder="数学, 高数, 第三章" />
+          </label>
+          <label>
+            <span>默认时长</span>
+            <input id="templateDuration" type="number" min="15" max="360" step="15" value="90" />
+          </label>
+          <label>
+            <span>颜色</span>
+            <input id="templateColor" type="color" value="#4f7cff" />
+          </label>
+          <label>
+            <span>排程类型</span>
+            <select id="templateMode">
+              <option value="slot">时间段</option>
+              <option value="point">时间点</option>
+              <option value="day">整天</option>
+              <option value="week">跨周</option>
+            </select>
+          </label>
+          <label class="wide">
+            <span>备注</span>
+            <textarea id="templateNote" rows="3" placeholder="可以写资料、目标、完成标准"></textarea>
+          </label>
+        </div>
+        <footer class="dialog-actions">
+          <button class="ghost-button" type="button" data-close-dialog>取消</button>
+          <button class="primary-button" id="saveTemplateButton" type="submit">保存</button>
+        </footer>
+      </form>
+    </dialog>
+
+    <dialog id="aiDialog" class="dialog">
+      <form method="dialog" id="aiForm">
+        <header class="dialog-head">
+          <h2>AI 生成任务块</h2>
+          <button class="icon-button" type="button" data-close-dialog aria-label="关闭">×</button>
+        </header>
+        <label class="stacked">
+          <span>描述你想安排的事</span>
+          <textarea id="aiPrompt" rows="5">明天上午安排高数第三章复习 90 分钟，下午安排英语阅读 60 分钟，晚上留 30 分钟复盘。</textarea>
+        </label>
+        <p class="dialog-note">原型里用规则解析模拟 AI：会识别数学、英语、政治、复盘、吃饭、运动等关键词并创建任务块。</p>
+        <footer class="dialog-actions">
+          <button class="ghost-button" type="button" data-close-dialog>取消</button>
+          <button class="primary-button" id="runAiButton" type="submit">生成</button>
+        </footer>
+      </form>
+    </dialog>
+
+    <script src="./app.js"></script>
+  </body>
+</html>

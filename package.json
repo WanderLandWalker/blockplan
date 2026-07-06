@@ -1,0 +1,51 @@
+{
+  "name": "blockplan",
+  "version": "0.2.0",
+  "private": true,
+  "description": "BlockPlan task-block scheduler for web, Windows, and Android.",
+  "main": "electron/main.js",
+  "scripts": {
+    "prepare:web": "node scripts/prepare-web-dist.mjs",
+    "dev:web": "node scripts/dev-server.mjs",
+    "desktop": "pnpm run prepare:web && electron .",
+    "build:windows": "pnpm run prepare:web && electron-builder --win portable",
+    "build:windows:nsis": "pnpm run prepare:web && electron-builder --win nsis",
+    "android:sync": "pnpm run prepare:web && cap sync android",
+    "android:open": "pnpm run android:sync && cap open android",
+    "android:build:debug": "pnpm run android:sync && cd android && gradlew.bat assembleDebug",
+    "check": "node --check app.js && node --check electron/main.js && node --check electron/preload.js && node --check scripts/prepare-web-dist.mjs && node --check scripts/dev-server.mjs"
+  },
+  "build": {
+    "appId": "com.blockplan.desktop",
+    "productName": "BlockPlan",
+    "directories": {
+      "output": "release/windows"
+    },
+    "files": [
+      "electron/**/*",
+      "assets/**/*",
+      "dist/web/**/*",
+      "package.json"
+    ],
+    "win": {
+      "icon": "assets/icon.ico",
+      "target": [
+        "portable",
+        "nsis"
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    }
+  },
+  "dependencies": {
+    "@capacitor/core": "^8.4.1"
+  },
+  "devDependencies": {
+    "@capacitor/android": "^8.4.1",
+    "@capacitor/cli": "^8.4.1",
+    "electron": "^43.0.0",
+    "electron-builder": "^26.15.3"
+  }
+}

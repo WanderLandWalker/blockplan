@@ -1,0 +1,10 @@
+{
+  "name": "BlockPlan",
+  "short_name": "BlockPlan",
+  "description": "任务块排程器",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f5f7fb",
+  "theme_color": "#2563eb",
+  "lang": "zh-CN"
+}
