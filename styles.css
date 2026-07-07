@@ -1003,6 +1003,10 @@ textarea {
   border-radius: 8px;
 }
 
+.detail-action-more {
+  display: none;
+}
+
 .detail-actions .danger {
   border-color: var(--danger-border);
   background: var(--danger-bg);
@@ -1832,6 +1836,36 @@ textarea {
   .today-panel,
   .stats-panel {
     min-height: auto;
+  }
+
+  .detail-content {
+    margin-top: 10px;
+  }
+
+  .detail-actions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    margin-top: 12px;
+  }
+
+  .detail-actions button {
+    min-width: 0;
+    min-height: 38px;
+    padding: 0 8px;
+  }
+
+  .detail-action-more {
+    display: block;
+    grid-column: 1 / -1;
+    color: var(--muted);
+  }
+
+  .detail-secondary-action {
+    display: none;
+  }
+
+  .detail-actions.is-expanded .detail-secondary-action {
+    display: block;
   }
 
   .mobile-tabbar {

@@ -249,6 +249,8 @@ const i18n = {
     split: "拆成两块",
     earlier: "提前15分",
     later: "延后15分",
+    moreAdjust: "更多调整",
+    lessAdjust: "收起调整",
     shorter: "缩短15分",
     longer: "延长15分",
     postpone: "推迟一天",
@@ -435,6 +437,8 @@ const i18n = {
     split: "Split",
     earlier: "15m earlier",
     later: "15m later",
+    moreAdjust: "More Adjustments",
+    lessAdjust: "Hide Adjustments",
     shorter: "15m shorter",
     longer: "15m longer",
     postpone: "Postpone 1 day",
@@ -1349,10 +1353,11 @@ function taskDetailBodyHtml(instance, template, options = {}) {
             <button type="button" data-action="split">${t("split")}</button>
             <button type="button" data-action="earlier">${t("earlier")}</button>
             <button type="button" data-action="later">${t("later")}</button>
-            <button type="button" data-action="shorter">${t("shorter")}</button>
-            <button type="button" data-action="longer">${t("longer")}</button>
-            <button type="button" data-action="postpone">${t("postpone")}</button>
-            <button type="button" data-action="delete" class="danger">${t("delete")}</button>
+            <button type="button" class="detail-action-more" data-detail-action-toggle>${t("moreAdjust")}</button>
+            <button type="button" class="detail-secondary-action" data-action="shorter">${t("shorter")}</button>
+            <button type="button" class="detail-secondary-action" data-action="longer">${t("longer")}</button>
+            <button type="button" class="detail-secondary-action" data-action="postpone">${t("postpone")}</button>
+            <button type="button" class="detail-secondary-action danger" data-action="delete">${t("delete")}</button>
           </div>`
         : ""
     }
@@ -1360,6 +1365,12 @@ function taskDetailBodyHtml(instance, template, options = {}) {
 }
 
 function bindTaskDetailActions(container, instanceId) {
+  container.querySelector("[data-detail-action-toggle]")?.addEventListener("click", (event) => {
+    event.stopPropagation();
+    const actions = event.currentTarget.closest(".detail-actions");
+    actions.classList.toggle("is-expanded");
+    event.currentTarget.textContent = actions.classList.contains("is-expanded") ? t("lessAdjust") : t("moreAdjust");
+  });
   container.querySelectorAll("[data-action]").forEach((button) => {
     button.addEventListener("click", (event) => {
       event.stopPropagation();

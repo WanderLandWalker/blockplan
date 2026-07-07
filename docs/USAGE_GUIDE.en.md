@@ -30,10 +30,10 @@ Open [Releases](https://github.com/WanderLandWalker/blockplan/releases/latest), 
 
 | Use Case | Download |
 |----------|----------|
-| Regular Windows install | `BlockPlan-0.2.9-windows-setup.exe` |
-| Portable Windows app | `BlockPlan-0.2.9-windows-portable.exe` |
-| Android phone | `BlockPlan-0.2.9-android-debug.apk` |
-| Browser-only build | `BlockPlan-0.2.9-web.zip` |
+| Regular Windows install | `BlockPlan-0.2.10-windows-setup.exe` |
+| Portable Windows app | `BlockPlan-0.2.10-windows-portable.exe` |
+| Android phone | `BlockPlan-0.2.10-android-debug.apk` |
+| Browser-only build | `BlockPlan-0.2.10-web.zip` |
 
 Windows may warn that the publisher is unknown because the app is not code-signed yet. Android may ask you to allow installation from your browser or file manager.
 
