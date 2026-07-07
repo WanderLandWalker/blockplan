@@ -1687,37 +1687,100 @@ textarea {
 @media (max-width: 860px) {
   :root {
     --sidebar: 1fr;
+    --topbar-height: auto;
     --hour-height: 66px;
+  }
+
+  body {
+    overflow-x: hidden;
+  }
+
+  .app-shell {
+    grid-template-rows: auto 1fr;
   }
 
   .topbar {
     height: auto;
-    min-height: var(--topbar-height);
-    align-items: flex-start;
-    flex-wrap: wrap;
+    min-height: 0;
+    align-items: stretch;
+    flex-direction: column;
     width: 100%;
     max-width: 100vw;
-    padding: 10px 12px;
+    padding: 10px 12px 12px;
     gap: 10px;
   }
 
   .brand {
     min-width: 0;
+    width: 100%;
   }
 
   .toolbar {
+    display: grid;
     width: 100%;
-    overflow-x: auto;
-    padding-bottom: 2px;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: 6px;
+    overflow: visible;
+    padding-bottom: 0;
+  }
+
+  .toolbar > * {
+    min-width: 0;
+  }
+
+  .toolbar .icon-button,
+  .toolbar .language-button,
+  .toolbar .theme-button,
+  .toolbar .help-button {
+    grid-column: span 2;
+    width: auto;
+    min-height: 36px;
+  }
+
+  .toolbar .segmented {
+    grid-column: span 4;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .toolbar .segment {
+    padding: 0;
+  }
+
+  .toolbar .primary-button {
+    grid-column: span 4;
+  }
+
+  .toolbar #exportDataButton,
+  .toolbar #importDataButton,
+  .toolbar #resetDataButton {
+    grid-column: span 4;
+    padding: 0 8px;
   }
 
   .workspace {
+    display: flex;
+    flex-direction: column;
     width: 100%;
     max-width: 100vw;
     height: auto;
-    min-height: calc(100vh - var(--topbar-height));
-    grid-template-columns: 1fr;
-    overflow: clip;
+    min-height: 0;
+    grid-template-columns: none;
+    gap: 10px;
+    padding: 10px;
+    overflow: visible;
+  }
+
+  .planner-area {
+    order: 1;
+  }
+
+  .task-library {
+    order: 2;
+  }
+
+  .detail-drawer {
+    order: 3;
   }
 
   .task-library,
@@ -1729,7 +1792,9 @@ textarea {
   }
 
   .planner-area {
-    min-height: 620px;
+    height: min(72vh, 680px);
+    min-height: 520px;
+    max-height: 680px;
   }
 
   .legend {
