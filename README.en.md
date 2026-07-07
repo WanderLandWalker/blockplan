@@ -10,7 +10,7 @@
 
 <p align="center">
   <a href="https://github.com/WanderLandWalker/blockplan/releases/latest">
-    <img src="https://img.shields.io/badge/Release-v0.2.8-blue?style=for-the-badge" alt="Release">
+    <img src="https://img.shields.io/badge/Release-v0.2.9-blue?style=for-the-badge" alt="Release">
   </a>
   <a href="LICENSE">
     <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="License">
@@ -78,10 +78,10 @@ Download the latest version from [Releases](https://github.com/WanderLandWalker/
 
 | File | Best For | Description |
 |------|----------|-------------|
-| `BlockPlan-0.2.8-windows-setup.exe` | Regular Windows users | Installs BlockPlan so you can launch it from the system |
-| `BlockPlan-0.2.8-windows-portable.exe` | No-install usage | Double-click to run without installation |
-| `BlockPlan-0.2.8-android-debug.apk` | Android users | Install on an Android phone |
-| `BlockPlan-0.2.8-web.zip` | Browser-only usage | Unzip and open `index.html` |
+| `BlockPlan-0.2.9-windows-setup.exe` | Regular Windows users | Installs BlockPlan so you can launch it from the system |
+| `BlockPlan-0.2.9-windows-portable.exe` | No-install usage | Double-click to run without installation |
+| `BlockPlan-0.2.9-android-debug.apk` | Android users | Install on an Android phone |
+| `BlockPlan-0.2.9-web.zip` | Browser-only usage | Unzip and open `index.html` |
 
 Not sure which one to choose:
 
@@ -167,6 +167,7 @@ The current AI Draft feature is a local rule-based prototype, not an online mode
 
 | Version | Changes |
 |---------|---------|
+| v0.2.9 | Reworks the mobile UI with a compact planner header, bottom navigation, and a More actions sheet to reduce clutter and improve phone usability |
 | v0.2.8 | Improves the Android phone layout and fixes the mobile app version shown by Android |
 | v0.2.7 | Improves button responsiveness by rendering in-app guide content only when needed, so hidden animations do not affect the main UI |
 | v0.2.6 | Adds visual previews and subtle animation to the in-app guide, and removes the fragile embedded Star History image |

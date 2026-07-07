@@ -1,6 +1,6 @@
 {
   "name": "blockplan",
-  "version": "0.2.8",
+  "version": "0.2.9",
   "private": true,
   "description": "BlockPlan task-block scheduler for web, Windows, and Android.",
   "main": "electron/main.js",

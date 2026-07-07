@@ -46,6 +46,26 @@
           <button class="ghost-button danger-button" id="resetDataButton" type="button">重置</button>
           <input class="visually-hidden" id="importDataInput" type="file" accept="application/json,.json" />
         </div>
+
+        <div class="mobile-planner-bar" aria-label="移动端排程工具栏">
+          <div class="mobile-range-controls">
+            <button class="icon-button" type="button" data-mobile-range="prev" title="上一段时间" aria-label="上一段时间">
+              <span aria-hidden="true">‹</span>
+            </button>
+            <button class="icon-button" type="button" data-mobile-range="today" title="回到今天" aria-label="回到今天">
+              <span aria-hidden="true">◎</span>
+            </button>
+            <button class="icon-button" type="button" data-mobile-range="next" title="下一段时间" aria-label="下一段时间">
+              <span aria-hidden="true">›</span>
+            </button>
+          </div>
+
+          <div class="segmented mobile-view-switch" role="tablist" aria-label="视图切换">
+            <button class="segment is-active" data-view="week" role="tab" aria-selected="true">周</button>
+            <button class="segment" data-view="day" role="tab" aria-selected="false">日</button>
+            <button class="segment" data-view="class" role="tab" aria-selected="false">类</button>
+          </div>
+        </div>
       </header>
 
       <main class="workspace">
@@ -131,9 +151,39 @@
           </section>
         </aside>
       </main>
+
+      <nav class="mobile-tabbar" aria-label="移动端导航">
+        <button class="mobile-tab is-active" type="button" data-mobile-panel="planner">排程</button>
+        <button class="mobile-tab" type="button" data-mobile-panel="library">任务</button>
+        <button class="mobile-tab mobile-add-tab" id="mobileAddButton" type="button">新建</button>
+        <button class="mobile-tab" type="button" data-mobile-panel="detail">清单</button>
+        <button class="mobile-tab" type="button" data-mobile-panel="more">更多</button>
+      </nav>
     </div>
 
     <div class="task-detail-popover" id="taskDetailPopover" role="dialog" aria-modal="false" hidden></div>
+
+    <div class="mobile-sheet" id="mobileMoreSheet" hidden>
+      <button class="mobile-sheet-backdrop" id="mobileSheetBackdrop" type="button" aria-label="关闭更多操作"></button>
+      <section class="mobile-sheet-card" role="dialog" aria-modal="true" aria-labelledby="mobileMoreTitle">
+        <header class="mobile-sheet-head">
+          <div>
+            <h2 id="mobileMoreTitle">更多操作</h2>
+            <p id="mobileMoreSubtitle">低频设置和数据管理</p>
+          </div>
+          <button class="icon-button" id="mobileMoreCloseButton" type="button" aria-label="关闭">×</button>
+        </header>
+        <div class="mobile-sheet-grid">
+          <button class="primary-button" id="mobileAiButton" type="button">AI 生成</button>
+          <button class="ghost-button" id="mobileLanguageButton" type="button">EN</button>
+          <button class="ghost-button" id="mobileThemeButton" type="button">深色模式</button>
+          <button class="ghost-button" id="mobileHelpButton" type="button">使用指南</button>
+          <button class="ghost-button" id="mobileExportButton" type="button">导出</button>
+          <button class="ghost-button" id="mobileImportButton" type="button">导入</button>
+          <button class="ghost-button danger-button" id="mobileResetButton" type="button">重置</button>
+        </div>
+      </section>
+    </div>
 
     <dialog id="onboardingDialog" class="dialog onboarding-dialog">
       <form method="dialog">

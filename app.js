@@ -89,6 +89,7 @@ let state = loadState();
 let language = loadLanguage();
 let theme = loadTheme();
 let activeGuideTopic = "blocks";
+let mobilePanel = "planner";
 let dragTemplateId = null;
 let dragInstanceId = null;
 
@@ -168,6 +169,13 @@ const i18n = {
       },
     ],
     toolbarLabel: "排程工具栏",
+    mobileNavLabel: "移动端导航",
+    mobileToolbarLabel: "移动端排程工具栏",
+    mobilePanels: { planner: "排程", library: "任务", detail: "清单", more: "更多" },
+    mobileAdd: "新建",
+    mobileMoreTitle: "更多操作",
+    mobileMoreSubtitle: "低频设置和数据管理",
+    closeMore: "关闭更多操作",
     previous: "上一段时间",
     today: "回到今天",
     next: "下一段时间",
@@ -347,6 +355,13 @@ const i18n = {
       },
     ],
     toolbarLabel: "Planner toolbar",
+    mobileNavLabel: "Mobile navigation",
+    mobileToolbarLabel: "Mobile planner toolbar",
+    mobilePanels: { planner: "Plan", library: "Blocks", detail: "Today", more: "More" },
+    mobileAdd: "New",
+    mobileMoreTitle: "More Actions",
+    mobileMoreSubtitle: "Less frequent settings and data tools",
+    closeMore: "Close more actions",
     previous: "Previous range",
     today: "Today",
     next: "Next range",
@@ -459,6 +474,7 @@ document.addEventListener("DOMContentLoaded", () => {
   cacheElements();
   seedInstances();
   bindEvents();
+  setMobilePanel(mobilePanel);
   render();
   showOnboardingIfNeeded();
 });
@@ -511,6 +527,23 @@ function cacheElements() {
     todayButton: document.querySelector("#todayButton"),
     prevRange: document.querySelector("#prevRange"),
     nextRange: document.querySelector("#nextRange"),
+    mobilePlannerBar: document.querySelector(".mobile-planner-bar"),
+    mobileTabbar: document.querySelector(".mobile-tabbar"),
+    mobileTabs: document.querySelectorAll("[data-mobile-panel]"),
+    mobileRangeButtons: document.querySelectorAll("[data-mobile-range]"),
+    mobileAddButton: document.querySelector("#mobileAddButton"),
+    mobileMoreSheet: document.querySelector("#mobileMoreSheet"),
+    mobileMoreTitle: document.querySelector("#mobileMoreTitle"),
+    mobileMoreSubtitle: document.querySelector("#mobileMoreSubtitle"),
+    mobileSheetBackdrop: document.querySelector("#mobileSheetBackdrop"),
+    mobileMoreCloseButton: document.querySelector("#mobileMoreCloseButton"),
+    mobileAiButton: document.querySelector("#mobileAiButton"),
+    mobileLanguageButton: document.querySelector("#mobileLanguageButton"),
+    mobileThemeButton: document.querySelector("#mobileThemeButton"),
+    mobileHelpButton: document.querySelector("#mobileHelpButton"),
+    mobileExportButton: document.querySelector("#mobileExportButton"),
+    mobileImportButton: document.querySelector("#mobileImportButton"),
+    mobileResetButton: document.querySelector("#mobileResetButton"),
   });
 }
 
@@ -582,9 +615,65 @@ function bindEvents() {
   els.prevRange.addEventListener("click", () => shiftRange(-1));
   els.nextRange.addEventListener("click", () => shiftRange(1));
   els.plannerCanvas.addEventListener("scroll", hideTaskDetailPopover);
-  window.addEventListener("resize", hideTaskDetailPopover);
+  window.addEventListener("resize", () => {
+    hideTaskDetailPopover();
+    if (!isMobileLayout()) closeMobileMoreSheet();
+  });
+
+  els.mobileRangeButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      const actions = {
+        prev: () => shiftRange(-1),
+        today: () => {
+          state.anchorDate = isoDate(new Date());
+          saveState();
+          render();
+        },
+        next: () => shiftRange(1),
+      };
+      actions[button.dataset.mobileRange]?.();
+    });
+  });
+  els.mobileTabs.forEach((button) => {
+    button.addEventListener("click", () => {
+      if (button.dataset.mobilePanel === "more") {
+        openMobileMoreSheet();
+        return;
+      }
+      setMobilePanel(button.dataset.mobilePanel);
+    });
+  });
+  els.mobileAddButton.addEventListener("click", () => openTemplateDialog());
+  els.mobileMoreCloseButton.addEventListener("click", closeMobileMoreSheet);
+  els.mobileSheetBackdrop.addEventListener("click", closeMobileMoreSheet);
+  els.mobileAiButton.addEventListener("click", () => {
+    closeMobileMoreSheet();
+    els.aiDialog.showModal();
+  });
+  els.mobileLanguageButton.addEventListener("click", toggleLanguage);
+  els.mobileThemeButton.addEventListener("click", toggleTheme);
+  els.mobileHelpButton.addEventListener("click", () => {
+    closeMobileMoreSheet();
+    openOnboarding();
+  });
+  els.mobileExportButton.addEventListener("click", () => {
+    closeMobileMoreSheet();
+    exportData();
+  });
+  els.mobileImportButton.addEventListener("click", () => {
+    closeMobileMoreSheet();
+    els.importDataInput.click();
+  });
+  els.mobileResetButton.addEventListener("click", () => {
+    closeMobileMoreSheet();
+    resetData();
+  });
 
   document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && !els.mobileMoreSheet.hidden) {
+      closeMobileMoreSheet();
+      return;
+    }
     if (event.key === "Escape" && !els.taskDetailPopover.hidden) {
       hideTaskDetailPopover();
       return;
@@ -614,6 +703,28 @@ function toggleTheme() {
   localStorage.setItem(THEME_STORAGE_KEY, theme);
   applyTheme();
   applyLanguageChrome();
+}
+
+function setMobilePanel(panel) {
+  if (!["planner", "library", "detail"].includes(panel)) return;
+  mobilePanel = panel;
+  els.appShell.dataset.mobilePanel = panel;
+  updateMobileChrome();
+  hideTaskDetailPopover();
+}
+
+function openMobileMoreSheet() {
+  els.mobileMoreSheet.hidden = false;
+  document.body.classList.add("mobile-sheet-open");
+  updateMobileChrome();
+  els.mobileMoreCloseButton.focus();
+}
+
+function closeMobileMoreSheet() {
+  if (!els.mobileMoreSheet || els.mobileMoreSheet.hidden) return;
+  els.mobileMoreSheet.hidden = true;
+  document.body.classList.remove("mobile-sheet-open");
+  updateMobileChrome();
 }
 
 function showOnboardingIfNeeded() {
@@ -766,13 +877,22 @@ function applyLanguageChrome() {
   document.title = language === "en" ? "BlockPlan Task Block Scheduler" : "BlockPlan 任务块排程器";
   document.querySelector(".brand p").textContent = t("appSubtitle");
   document.querySelector(".toolbar").setAttribute("aria-label", t("toolbarLabel"));
+  els.mobilePlannerBar.setAttribute("aria-label", t("mobileToolbarLabel"));
+  els.mobileTabbar.setAttribute("aria-label", t("mobileNavLabel"));
   els.prevRange.title = t("previous");
   els.prevRange.setAttribute("aria-label", t("previous"));
   els.todayButton.title = t("today");
   els.todayButton.setAttribute("aria-label", t("today"));
   els.nextRange.title = t("next");
   els.nextRange.setAttribute("aria-label", t("next"));
-  document.querySelector(".segmented").setAttribute("aria-label", t("viewSwitch"));
+  document.querySelectorAll(".segmented").forEach((element) => {
+    element.setAttribute("aria-label", t("viewSwitch"));
+  });
+  els.mobileRangeButtons.forEach((button) => {
+    const label = button.dataset.mobileRange === "prev" ? t("previous") : button.dataset.mobileRange === "next" ? t("next") : t("today");
+    button.title = label;
+    button.setAttribute("aria-label", label);
+  });
   els.languageToggleButton.textContent = t("languageToggle");
   els.languageToggleButton.title = t("languageTitle");
   els.languageToggleButton.setAttribute("aria-label", t("languageTitle"));
@@ -835,9 +955,37 @@ function applyLanguageChrome() {
   els.guideTabs.setAttribute("aria-label", t("guideTabsLabel"));
   els.guideToggleButton.textContent = els.guidePanel.hidden ? t("onboardingGuide") : t("onboardingGuideHide");
   els.onboardingDoneButton.textContent = t("onboardingDone");
+  updateMobileChrome();
   if (!els.guidePanel.hidden && els.onboardingDialog.open) {
     renderGuidePanel();
   }
+}
+
+function updateMobileChrome() {
+  if (!els.mobileTabs) return;
+  els.appShell.dataset.mobilePanel = mobilePanel;
+  const mobileSheetOpen = els.mobileMoreSheet && !els.mobileMoreSheet.hidden;
+  els.mobileTabs.forEach((button) => {
+    const isMore = button.dataset.mobilePanel === "more";
+    const active = isMore ? mobileSheetOpen : !mobileSheetOpen && button.dataset.mobilePanel === mobilePanel;
+    button.classList.toggle("is-active", active);
+    button.setAttribute("aria-current", active ? "page" : "false");
+    button.textContent = t(`mobilePanels.${button.dataset.mobilePanel}`);
+  });
+  els.mobileAddButton.textContent = t("mobileAdd");
+  els.mobileMoreTitle.textContent = t("mobileMoreTitle");
+  els.mobileMoreSubtitle.textContent = t("mobileMoreSubtitle");
+  els.mobileSheetBackdrop.setAttribute("aria-label", t("closeMore"));
+  els.mobileMoreCloseButton.setAttribute("aria-label", t("close"));
+  els.mobileAiButton.textContent = t("aiGenerate");
+  els.mobileLanguageButton.textContent = t("languageToggle");
+  els.mobileLanguageButton.setAttribute("aria-label", t("languageTitle"));
+  els.mobileThemeButton.textContent = theme === "dark" ? t("themeLight") : t("themeDark");
+  els.mobileThemeButton.setAttribute("aria-label", theme === "dark" ? t("switchToLight") : t("switchToDark"));
+  els.mobileHelpButton.textContent = t("helpTitle");
+  els.mobileExportButton.textContent = t("export");
+  els.mobileImportButton.textContent = t("import");
+  els.mobileResetButton.textContent = t("reset");
 }
 
 function renderTemplates() {
@@ -1392,6 +1540,10 @@ function selectInstance(id, anchorRect = null) {
   renderDetails();
   renderTodayList();
   renderStats();
+  if (isMobileLayout()) {
+    setMobilePanel("detail");
+    return;
+  }
   if (anchorRect) {
     showTaskDetailPopover(id, anchorRect);
   } else {
@@ -1863,6 +2015,10 @@ function loadTheme() {
   const stored = localStorage.getItem(THEME_STORAGE_KEY);
   if (stored === "dark" || stored === "light") return stored;
   return window.matchMedia?.("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+}
+
+function isMobileLayout() {
+  return window.matchMedia?.("(max-width: 860px)").matches ?? window.innerWidth <= 860;
 }
 
 function t(key, fallback = key) {
