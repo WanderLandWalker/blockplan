@@ -2,11 +2,17 @@ const STORAGE_KEY = "blockplan-prototype-v1";
 const LANG_STORAGE_KEY = "blockplan-language";
 const THEME_STORAGE_KEY = "blockplan-theme";
 const ONBOARDING_STORAGE_KEY = "blockplan-onboarding-seen";
+const LAYOUT_STORAGE_KEY = "blockplan-layout";
 const EXPORT_VERSION = 1;
 const MINUTES_PER_DAY = 24 * 60;
 const DAY_START_HOUR = 0;
 const DAY_HOUR_COUNT = 24;
 const DEFAULT_LANG = "zh";
+const DEFAULT_LAYOUT = { sidebar: 308, drawer: 328 };
+const LAYOUT_LIMITS = {
+  sidebar: { min: 220, max: 430 },
+  drawer: { min: 260, max: 460 },
+};
 
 const classColors = {
   考研: "#4f7cff",
@@ -88,10 +94,12 @@ const defaultState = {
 let state = loadState();
 let language = loadLanguage();
 let theme = loadTheme();
+let layout = loadLayout();
 let activeGuideTopic = "blocks";
 let mobilePanel = "planner";
 let dragTemplateId = null;
 let dragInstanceId = null;
+let layoutResizeSession = null;
 
 const els = {};
 
@@ -173,6 +181,8 @@ const i18n = {
     mobileToolbarLabel: "移动端排程工具栏",
     mobilePanels: { planner: "排程", library: "任务", detail: "清单", more: "更多" },
     mobileAdd: "新建",
+    resizeSidebar: "调整模板库宽度",
+    resizeDrawer: "调整详情区宽度",
     mobileMoreTitle: "更多操作",
     mobileMoreSubtitle: "低频设置和数据管理",
     closeMore: "关闭更多操作",
@@ -361,6 +371,8 @@ const i18n = {
     mobileToolbarLabel: "Mobile planner toolbar",
     mobilePanels: { planner: "Plan", library: "Blocks", detail: "Today", more: "More" },
     mobileAdd: "New",
+    resizeSidebar: "Resize template library",
+    resizeDrawer: "Resize detail panel",
     mobileMoreTitle: "More Actions",
     mobileMoreSubtitle: "Less frequent settings and data tools",
     closeMore: "Close more actions",
@@ -478,6 +490,7 @@ document.addEventListener("DOMContentLoaded", () => {
   cacheElements();
   seedInstances();
   bindEvents();
+  applyLayout();
   setMobilePanel(mobilePanel);
   render();
   showOnboardingIfNeeded();
@@ -486,6 +499,7 @@ document.addEventListener("DOMContentLoaded", () => {
 function cacheElements() {
   Object.assign(els, {
     appShell: document.querySelector(".app-shell"),
+    workspace: document.querySelector(".workspace"),
     templateList: document.querySelector("#templateList"),
     unscheduledList: document.querySelector("#unscheduledList"),
     plannerCanvas: document.querySelector("#plannerCanvas"),
@@ -531,6 +545,9 @@ function cacheElements() {
     todayButton: document.querySelector("#todayButton"),
     prevRange: document.querySelector("#prevRange"),
     nextRange: document.querySelector("#nextRange"),
+    resizeHandles: document.querySelectorAll("[data-resize-panel]"),
+    sidebarResizer: document.querySelector("[data-resize-panel='sidebar']"),
+    drawerResizer: document.querySelector("[data-resize-panel='drawer']"),
     mobilePlannerBar: document.querySelector(".mobile-planner-bar"),
     mobileTabbar: document.querySelector(".mobile-tabbar"),
     mobileTabs: document.querySelectorAll("[data-mobile-panel]"),
@@ -621,7 +638,13 @@ function bindEvents() {
   els.plannerCanvas.addEventListener("scroll", hideTaskDetailPopover);
   window.addEventListener("resize", () => {
     hideTaskDetailPopover();
+    clampLayoutToViewport();
     if (!isMobileLayout()) closeMobileMoreSheet();
+  });
+
+  els.resizeHandles.forEach((handle) => {
+    handle.addEventListener("pointerdown", startLayoutResize);
+    handle.addEventListener("keydown", adjustLayoutWithKeyboard);
   });
 
   els.mobileRangeButtons.forEach((button) => {
@@ -729,6 +752,119 @@ function closeMobileMoreSheet() {
   els.mobileMoreSheet.hidden = true;
   document.body.classList.remove("mobile-sheet-open");
   updateMobileChrome();
+}
+
+function startLayoutResize(event) {
+  if (event.button !== 0 || isMobileLayout()) return;
+  const panel = event.currentTarget.dataset.resizePanel;
+  if (panel === "sidebar" && els.appShell.classList.contains("library-collapsed")) return;
+  event.preventDefault();
+  layoutResizeSession = {
+    panel,
+    handle: event.currentTarget,
+    pointerId: event.pointerId,
+  };
+  event.currentTarget.classList.add("is-resizing");
+  event.currentTarget.setPointerCapture?.(event.pointerId);
+  document.body.classList.add("is-resizing-layout");
+  window.addEventListener("pointermove", updateLayoutResize);
+  window.addEventListener("pointerup", stopLayoutResize);
+  hideTaskDetailPopover();
+}
+
+function updateLayoutResize(event) {
+  if (!layoutResizeSession) return;
+  const nextValue = getLayoutSizeFromPointer(layoutResizeSession.panel, event.clientX);
+  if (nextValue == null) return;
+  layout[layoutResizeSession.panel] = nextValue;
+  applyLayout();
+}
+
+function stopLayoutResize() {
+  if (!layoutResizeSession) return;
+  layoutResizeSession.handle.classList.remove("is-resizing");
+  document.body.classList.remove("is-resizing-layout");
+  window.removeEventListener("pointermove", updateLayoutResize);
+  window.removeEventListener("pointerup", stopLayoutResize);
+  saveLayout();
+  layoutResizeSession = null;
+}
+
+function adjustLayoutWithKeyboard(event) {
+  if (!["ArrowLeft", "ArrowRight"].includes(event.key) || isMobileLayout()) return;
+  const panel = event.currentTarget.dataset.resizePanel;
+  if (panel === "sidebar" && els.appShell.classList.contains("library-collapsed")) return;
+  event.preventDefault();
+  const delta = event.key === "ArrowRight" ? 12 : -12;
+  const direction = panel === "drawer" ? -delta : delta;
+  layout[panel] = clampLayoutSize(panel, layout[panel] + direction);
+  applyLayout();
+  saveLayout();
+  hideTaskDetailPopover();
+}
+
+function getLayoutSizeFromPointer(panel, clientX) {
+  const workspaceRect = els.workspace.getBoundingClientRect();
+  const style = getComputedStyle(els.workspace);
+  const paddingLeft = parseFloat(style.paddingLeft) || 0;
+  const paddingRight = parseFloat(style.paddingRight) || 0;
+  if (panel === "sidebar") {
+    return clampLayoutSize("sidebar", Math.round(clientX - workspaceRect.left - paddingLeft));
+  }
+  if (panel === "drawer") {
+    return clampLayoutSize("drawer", Math.round(workspaceRect.right - paddingRight - clientX));
+  }
+  return null;
+}
+
+function clampLayoutSize(panel, value) {
+  const limits = LAYOUT_LIMITS[panel];
+  if (panel === "drawer" && !isDrawerInMainGrid()) {
+    return clamp(Math.round(value), limits.min, limits.max);
+  }
+  const workspaceWidth = els.workspace?.getBoundingClientRect().width || window.innerWidth;
+  const otherPanel = panel === "sidebar" ? "drawer" : "sidebar";
+  const otherWidth = panel === "sidebar" && !isDrawerInMainGrid() ? 0 : layout[otherPanel];
+  const plannerMinimum = isDrawerInMainGrid() ? 520 : 480;
+  const maxByViewport = Math.max(limits.min, workspaceWidth - otherWidth - plannerMinimum - 52);
+  return clamp(Math.round(value), limits.min, Math.min(limits.max, maxByViewport));
+}
+
+function clampLayoutToViewport() {
+  if (isMobileLayout()) {
+    applyLayout();
+    return;
+  }
+  layout.sidebar = clampLayoutSize("sidebar", layout.sidebar);
+  layout.drawer = clampLayoutSize("drawer", layout.drawer);
+  applyLayout();
+  saveLayout();
+}
+
+function applyLayout() {
+  if (!isMobileLayout()) {
+    layout.sidebar = clampLayoutSize("sidebar", layout.sidebar);
+    layout.drawer = clampLayoutSize("drawer", layout.drawer);
+  }
+  document.documentElement.style.setProperty("--sidebar", `${layout.sidebar}px`);
+  document.documentElement.style.setProperty("--drawer", `${layout.drawer}px`);
+  updateLayoutSeparators();
+}
+
+function updateLayoutSeparators() {
+  if (!els.sidebarResizer || !els.drawerResizer) return;
+  els.sidebarResizer.setAttribute("aria-label", t("resizeSidebar"));
+  els.sidebarResizer.setAttribute("aria-valuemin", String(LAYOUT_LIMITS.sidebar.min));
+  els.sidebarResizer.setAttribute("aria-valuemax", String(LAYOUT_LIMITS.sidebar.max));
+  els.sidebarResizer.setAttribute("aria-valuenow", String(layout.sidebar));
+  els.drawerResizer.setAttribute("aria-label", t("resizeDrawer"));
+  els.drawerResizer.setAttribute("aria-valuemin", String(LAYOUT_LIMITS.drawer.min));
+  els.drawerResizer.setAttribute("aria-valuemax", String(LAYOUT_LIMITS.drawer.max));
+  els.drawerResizer.setAttribute("aria-valuenow", String(layout.drawer));
+}
+
+function saveLayout() {
+  localStorage.setItem(LAYOUT_STORAGE_KEY, JSON.stringify(layout));
 }
 
 function showOnboardingIfNeeded() {
@@ -897,6 +1033,7 @@ function applyLanguageChrome() {
     button.title = label;
     button.setAttribute("aria-label", label);
   });
+  updateLayoutSeparators();
   els.languageToggleButton.textContent = t("languageToggle");
   els.languageToggleButton.title = t("languageTitle");
   els.languageToggleButton.setAttribute("aria-label", t("languageTitle"));
@@ -2028,8 +2165,24 @@ function loadTheme() {
   return window.matchMedia?.("(prefers-color-scheme: dark)").matches ? "dark" : "light";
 }
 
+function loadLayout() {
+  try {
+    const parsed = JSON.parse(localStorage.getItem(LAYOUT_STORAGE_KEY) || "null");
+    return {
+      sidebar: clamp(Number(parsed?.sidebar) || DEFAULT_LAYOUT.sidebar, LAYOUT_LIMITS.sidebar.min, LAYOUT_LIMITS.sidebar.max),
+      drawer: clamp(Number(parsed?.drawer) || DEFAULT_LAYOUT.drawer, LAYOUT_LIMITS.drawer.min, LAYOUT_LIMITS.drawer.max),
+    };
+  } catch {
+    return { ...DEFAULT_LAYOUT };
+  }
+}
+
 function isMobileLayout() {
   return window.matchMedia?.("(max-width: 860px)").matches ?? window.innerWidth <= 860;
+}
+
+function isDrawerInMainGrid() {
+  return window.matchMedia?.("(min-width: 1181px)").matches ?? window.innerWidth > 1180;
 }
 
 function t(key, fallback = key) {

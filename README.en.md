@@ -10,7 +10,7 @@
 
 <p align="center">
   <a href="https://github.com/WanderLandWalker/blockplan/releases/latest">
-    <img src="https://img.shields.io/badge/Release-v0.2.10-blue?style=for-the-badge" alt="Release">
+    <img src="https://img.shields.io/badge/Release-v0.2.11-blue?style=for-the-badge" alt="Release">
   </a>
   <a href="LICENSE">
     <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="License">
@@ -78,10 +78,10 @@ Download the latest version from [Releases](https://github.com/WanderLandWalker/
 
 | File | Best For | Description |
 |------|----------|-------------|
-| `BlockPlan-0.2.10-windows-setup.exe` | Regular Windows users | Installs BlockPlan so you can launch it from the system |
-| `BlockPlan-0.2.10-windows-portable.exe` | No-install usage | Double-click to run without installation |
-| `BlockPlan-0.2.10-android-debug.apk` | Android users | Install on an Android phone |
-| `BlockPlan-0.2.10-web.zip` | Browser-only usage | Unzip and open `index.html` |
+| `BlockPlan-0.2.11-windows-setup.exe` | Regular Windows users | Installs BlockPlan so you can launch it from the system |
+| `BlockPlan-0.2.11-windows-portable.exe` | No-install usage | Double-click to run without installation |
+| `BlockPlan-0.2.11-android-debug.apk` | Android users | Install on an Android phone |
+| `BlockPlan-0.2.11-web.zip` | Browser-only usage | Unzip and open `index.html` |
 
 Not sure which one to choose:
 
@@ -167,6 +167,7 @@ The current AI Draft feature is a local rule-based prototype, not an online mode
 
 | Version | Changes |
 |---------|---------|
+| v0.2.11 | Adds desktop drag resizing for the template library and detail panel, remembers the user's layout, and keeps the mobile bottom-navigation layout unchanged |
 | v0.2.10 | Cleans up mobile task detail actions: 4 common actions are shown by default, while less frequent adjustments live under More Adjustments to avoid hidden or confusing button counts |
 | v0.2.9 | Reworks the mobile UI with a compact planner header, bottom navigation, and a More actions sheet to reduce clutter and improve phone usability |
 | v0.2.8 | Improves the Android phone layout and fixes the mobile app version shown by Android |

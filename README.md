@@ -10,7 +10,7 @@
 
 <p align="center">
   <a href="https://github.com/WanderLandWalker/blockplan/releases/latest">
-    <img src="https://img.shields.io/badge/Release-v0.2.10-blue?style=for-the-badge" alt="Release">
+    <img src="https://img.shields.io/badge/Release-v0.2.11-blue?style=for-the-badge" alt="Release">
   </a>
   <a href="LICENSE">
     <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="License">
@@ -78,10 +78,10 @@ BlockPlan 的定位更窄，也更直接：
 
 | 文件 | 适合谁 | 说明 |
 |------|--------|------|
-| `BlockPlan-0.2.10-windows-setup.exe` | Windows 常用用户 | 安装到系统里，后续从开始菜单或桌面启动 |
-| `BlockPlan-0.2.10-windows-portable.exe` | 想免安装使用的人 | 双击即用，不写入安装目录 |
-| `BlockPlan-0.2.10-android-debug.apk` | Android 手机用户 | 下载到手机后安装使用 |
-| `BlockPlan-0.2.10-web.zip` | 只想用浏览器打开的人 | 解压后打开 `index.html` |
+| `BlockPlan-0.2.11-windows-setup.exe` | Windows 常用用户 | 安装到系统里，后续从开始菜单或桌面启动 |
+| `BlockPlan-0.2.11-windows-portable.exe` | 想免安装使用的人 | 双击即用，不写入安装目录 |
+| `BlockPlan-0.2.11-android-debug.apk` | Android 手机用户 | 下载到手机后安装使用 |
+| `BlockPlan-0.2.11-web.zip` | 只想用浏览器打开的人 | 解压后打开 `index.html` |
 
 不知道选哪个：
 
@@ -167,6 +167,7 @@ BlockPlan 的定位更窄，也更直接：
 
 | 版本 | 变化 |
 |:----:|------|
+| v0.2.11 | 桌面端支持拖拽调整模板库和详情区宽度，并自动记住用户调整；手机端保持底部导航布局 |
 | v0.2.10 | 整理手机端详情操作区，默认显示 4 个常用操作，低频调整收进“更多调整”，避免按钮被遮挡或数量看起来混乱 |
 | v0.2.9 | 手机端改为顶部精简排程栏、底部导航和更多操作抽屉，减少遮挡并提升移动端可用性 |
 | v0.2.8 | 优化 Android 手机端布局，修正顶部遮挡和移动端版本号显示 |

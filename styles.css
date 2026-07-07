@@ -356,10 +356,45 @@ button {
 .workspace {
   height: calc(100vh - var(--topbar-height));
   display: grid;
-  grid-template-columns: var(--sidebar) minmax(520px, 1fr) var(--drawer);
-  gap: 12px;
+  grid-template-columns: var(--sidebar) 8px minmax(520px, 1fr) 8px var(--drawer);
+  gap: 6px;
   padding: 12px;
   overflow: hidden;
+}
+
+.workspace-resizer {
+  position: relative;
+  min-width: 8px;
+  border: 0;
+  background: transparent;
+  cursor: col-resize;
+  touch-action: none;
+}
+
+.workspace-resizer::before {
+  content: "";
+  position: absolute;
+  top: 8px;
+  right: 2px;
+  bottom: 8px;
+  left: 2px;
+  border-radius: 999px;
+  background: transparent;
+  transition:
+    background 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.workspace-resizer:hover::before,
+.workspace-resizer:focus-visible::before,
+.workspace-resizer.is-resizing::before {
+  background: var(--line-strong);
+  box-shadow: 0 0 0 3px var(--focus-ring);
+}
+
+body.is-resizing-layout {
+  cursor: col-resize;
+  user-select: none;
 }
 
 .panel,
@@ -1679,7 +1714,11 @@ textarea {
   }
 
   .workspace {
-    grid-template-columns: var(--sidebar) minmax(480px, 1fr);
+    grid-template-columns: var(--sidebar) 8px minmax(480px, 1fr);
+  }
+
+  .workspace-resizer-right {
+    display: none;
   }
 
   .detail-drawer {
@@ -1784,6 +1823,10 @@ textarea {
     padding: 10px;
     padding-bottom: 92px;
     overflow: visible;
+  }
+
+  .workspace-resizer {
+    display: none;
   }
 
   .app-shell[data-mobile-panel="planner"] .task-library,
